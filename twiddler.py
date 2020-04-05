@@ -1,5 +1,6 @@
 from z3 import *
 from datetime import datetime, timedelta
+import sys
 
 setupTime = datetime.now()
 s = Solver()
@@ -14,19 +15,21 @@ s = Solver()
 #   range for the highest CPS it can find. It will quit once the difference between the
 #   highest satisfiable (sat) solution and the lowest unsatisfiable/timeout (unsat/unknown)
 #   is less than the resolution.
-print("12 buttons limited to 15 chars expanded form.")
-cps_hi = 5.0
-cps_lo = 1.0
-cps_res = 0.01
+cps_hi = 3.0
+cps_lo = 1.8
+cps_res = 0.05
 # The number of miliseconds the solver should spend on any single iteration.
 #   Higher is better and slower.
 timeout = timedelta(minutes=15)
 # Ignores all n_grams (except single alphabet characters) with a frequency below the cutoff.
 #   Lower is better and slower.
 cutoff = 8000000
+# Affects how aggressively the frequency of k_grams is reduced when they are sub-strings of
+#   (k + 1)_grams. Set to 0 to turn off.
+freq_prune = 2/3
 
 print(f'Hi: {cps_hi}, Lo: {cps_lo}, Resolution: {cps_res}')
-print(f'Timeout: {timeout}, Cutoff: {cutoff}')
+print(f'Timeout: {timeout}, Cutoff: {cutoff}, Freq_prune: {freq_prune:.2f}')
 print("---------------------------------------")
 
 # ***************************************
@@ -64,8 +67,60 @@ count.extend(t2)
 
 # We create a dictionary to quickly lookup the index of all n_grams
 index_of = {}
+total_count_assertion_check = 0
 for i in range(len(n_gram)):
     index_of[n_gram[i]] = i
+    total_count_assertion_check += count[i]
+
+# Setup for some assertion checking below.
+total_removal = 0
+total_count = 0
+for i in range(26):
+    total_count += count[i]
+
+# Remove excess counting.
+# Frequency of "H" is 216768975, but the frequency of "TH" is 116997844.
+# Notice that "H" is counted multiple times, we want to remove the counts of all k-grams
+#   that are used in (k + 1)-grams so that the solver is incentivized to make a layout with
+#   more combos. However, note that "H" appears in the 2-grams "TH" and "HE":
+#   "H" 216768975 - "TH" 116997844 - "HE" 100689263 = -918132 which is clearly incorrect.
+# Finally, even when accounting for this we can still subtract too much, so we add a
+#   freq_prune ratio.
+# Therefore the adjustment is as follows:
+#   i-gram_frequency -= (i + 1)-gram_frequency * (k / (k + 1)) * freq_prune
+for i in range(26, len(n_gram)):
+    total_count += count[i]
+    l = len(n_gram[i])
+    a = n_gram[i][1:] # Get all but the first letter.
+    if a in index_of:
+        a_i = index_of[a]
+        assert(a_i < i)
+        sub = count[i] * ((l - 1) / l) * freq_prune
+        count[a_i] -= sub
+        total_removal += sub
+        # if a == "TH":
+        #     print(f"count: {count[a_i]}, index: {a_i}, sub: {sub}, word: {n_gram[i]}, ratio: {(l - 1) / l}")
+    b = n_gram[i][:-1] # Get all but the last letter.
+    if b in index_of:
+        b_i = index_of[b]
+        assert(b_i < i)
+        sub = count[i] * ((l - 1) / l) * freq_prune
+        count[b_i] -= sub
+        total_removal += sub
+        # if b == "TH":
+        #     print(f"count: {count[b_i]}, index: {b_i}, sub: {sub}, word: {n_gram[i]}, ratio: {(l - 1) / l}")
+    # print(f"a: {a}, b: {b}")
+
+# In the above loop count[i] should never be subtracted from before it
+#   is added to total_count. This assestion checks this.
+assert(total_count == total_count_assertion_check)
+
+for i in range(len(n_gram)):
+    # print(f'{n_gram[i]} {count[i]}')
+    if count[i] <= 0:
+        print("freq_prune is set too high!")
+        sys.exit()
+print(f"Removed {total_removal * 100 / total_count:.2f}% of frequency count as excess.")
 
 # ***************************************
 # Problem Definition and hard constraints
@@ -112,35 +167,6 @@ for i in range(26, len(n_gram)):
         s.add(Or(G[index_of[n_gram[i][0]]] | G[index_of[n_gram[i][1]]] | G[index_of[n_gram[i][2]]] | G[index_of[n_gram[i][3]]] == G[i], G[i] == 0))
     elif len(n_gram[i]) == 5:
         s.add(Or(G[index_of[n_gram[i][0]]] | G[index_of[n_gram[i][1]]] | G[index_of[n_gram[i][2]]] | G[index_of[n_gram[i][3]]] | G[index_of[n_gram[i][4]]] == G[i], G[i] == 0))
-
-
-# **********************************************
-# Time Saving Heuristics
-#  - Help the solver by adding constaints.
-#  - Note this may yield a worse configuration,
-#     so be sure to only add sensible constraints
-# **********************************************
-
-# We force that one of the 15 most frequent alphabet characters are assigned to each of the 12 buttons.
-# for button in range(12):
-#     res = True
-#     for i in range(15):
-#         res = Or(res, G[i] == 2**button)
-#     s.add(res)
-#     print(res)
-
-s.add(Or(G[0] == 1, G[1] == 1, G[2] == 1, G[3] == 1, G[4] == 1, G[5] == 1, G[6] == 1, G[7] == 1, G[8] == 1, G[9] == 1, G[10] == 1, G[11] == 1, G[12] == 1, G[13] == 1, G[14] == 1))
-s.add(Or(G[0] == 2, G[1] == 2, G[2] == 2, G[3] == 2, G[4] == 2, G[5] == 2, G[6] == 2, G[7] == 2, G[8] == 2, G[9] == 2, G[10] == 2, G[11] == 2, G[12] == 2, G[13] == 2, G[14] == 2))
-s.add(Or(G[0] == 4, G[1] == 4, G[2] == 4, G[3] == 4, G[4] == 4, G[5] == 4, G[6] == 4, G[7] == 4, G[8] == 4, G[9] == 4, G[10] == 4, G[11] == 4, G[12] == 4, G[13] == 4, G[14] == 4))
-s.add(Or(G[0] == 8, G[1] == 8, G[2] == 8, G[3] == 8, G[4] == 8, G[5] == 8, G[6] == 8, G[7] == 8, G[8] == 8, G[9] == 8, G[10] == 8, G[11] == 8, G[12] == 8, G[13] == 8, G[14] == 8))
-s.add(Or(G[0] == 16, G[1] == 16, G[2] == 16, G[3] == 16, G[4] == 16, G[5] == 16, G[6] == 16, G[7] == 16, G[8] == 16, G[9] == 16, G[10] == 16, G[11] == 16, G[12] == 16, G[13] == 16, G[14] == 16))
-s.add(Or(G[0] == 32, G[1] == 32, G[2] == 32, G[3] == 32, G[4] == 32, G[5] == 32, G[6] == 32, G[7] == 32, G[8] == 32, G[9] == 32, G[10] == 32, G[11] == 32, G[12] == 32, G[13] == 32, G[14] == 32))
-s.add(Or(G[0] == 64, G[1] == 64, G[2] == 64, G[3] == 64, G[4] == 64, G[5] == 64, G[6] == 64, G[7] == 64, G[8] == 64, G[9] == 64, G[10] == 64, G[11] == 64, G[12] == 64, G[13] == 64, G[14] == 64))
-s.add(Or(G[0] == 128, G[1] == 128, G[2] == 128, G[3] == 128, G[4] == 128, G[5] == 128, G[6] == 128, G[7] == 128, G[8] == 128, G[9] == 128, G[10] == 128, G[11] == 128, G[12] == 128, G[13] == 128, G[14] == 128))
-s.add(Or(G[0] == 256, G[1] == 256, G[2] == 256, G[3] == 256, G[4] == 256, G[5] == 256, G[6] == 256, G[7] == 256, G[8] == 256, G[9] == 256, G[10] == 256, G[11] == 256, G[12] == 256, G[13] == 256, G[14] == 256))
-s.add(Or(G[0] == 512, G[1] == 512, G[2] == 512, G[3] == 512, G[4] == 512, G[5] == 512, G[6] == 512, G[7] == 512, G[8] == 512, G[9] == 512, G[10] == 512, G[11] == 512, G[12] == 512, G[13] == 512, G[14] == 512))
-s.add(Or(G[0] == 1024, G[1] == 1024, G[2] == 1024, G[3] == 1024, G[4] == 1024, G[5] == 1024, G[6] == 1024, G[7] == 1024, G[8] == 1024, G[9] == 1024, G[10] == 1024, G[11] == 1024, G[12] == 1024, G[13] == 1024, G[14] == 1024))
-s.add(Or(G[0] == 2048, G[1] == 2048, G[2] == 2048, G[3] == 2048, G[4] == 2048, G[5] == 2048, G[6] == 2048, G[7] == 2048, G[8] == 2048, G[9] == 2048, G[10] == 2048, G[11] == 2048, G[12] == 2048, G[13] == 2048, G[14] == 2048))
 
 # **********************************************
 # Cost constraints
