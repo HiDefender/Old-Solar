@@ -16,11 +16,19 @@ s = Solver()
 #   highest satisfiable (sat) solution and the lowest unsatisfiable/timeout (unsat/unknown)
 #   is less than the resolution.
 cps_hi = 3.0
-cps_lo = 1.8
+cps_lo = 1.0
+assert(cps_hi > cps_lo)
 cps_res = 0.05
+# -Easy SAT and clearly UNSAT problems are solved quickly.
+# -The solver learns more from solving SAT problems.
+#   Therefore search begins at cps_lo and increases each time by initial_step_up.
+#   Once the first UNSAT or UNKNOWN is encountered, binary search is used instead.
+#   Set initial_lo_to_hi_ratio_step_up to zero to enter binary search immediately.
+initial_lo_to_hi_ratio_step_up = 1/10
+initial_step_up = (cps_hi - cps_lo) * initial_lo_to_hi_ratio_step_up
 # The number of miliseconds the solver should spend on any single iteration.
 #   Higher is better and slower.
-timeout = timedelta(minutes=15)
+timeout = timedelta(minutes=2)
 # Ignores all n_grams (except single alphabet characters) with a frequency below the cutoff.
 #   Lower is better and slower.
 cutoff = 8000000
@@ -275,9 +283,17 @@ hi_sat = 0
 lo_unsat = float("inf")
 lo_unknown = float("inf")
 m = None
+# See comments above in "Guide the Search" for understanding how this works.
 while min(lo_unsat, lo_unknown, cps_hi) - max(hi_sat, cps_lo) > cps_res:
     solveTime = datetime.now()
-    guess_cps = (min(lo_unsat, lo_unknown, cps_hi) + max(hi_sat, cps_lo)) / 2
+
+    # We start from cps_lo initially and increment up by initial_step_up
+    #   until we encounter an UNSAT or UNKNOWN problem then we begin
+    #   binary search.
+    if initial_step_up != 0:
+        guess_cps = max(hi_sat, cps_lo - initial_step_up) + initial_step_up
+    else:
+        guess_cps = (min(lo_unsat, lo_unknown, cps_hi) + max(hi_sat, cps_lo)) / 2
 
     # For some reason the solver cannot handle this constraint:
     #   s.add(chars_per_second >= cps)
@@ -296,10 +312,12 @@ while min(lo_unsat, lo_unknown, cps_hi) - max(hi_sat, cps_lo) > cps_res:
         m = s.model()
     elif result == unsat:
         lo_unsat = guess_cps
+        initial_step_up = 0
         s.pop() # Restore state (i.e. Remove guess constraint)
                 # Only remove guess constraint when it can't be attained, not when sat.
     elif result == unknown:
         lo_unknown = guess_cps
+        initial_step_up = 0
         s.pop() # Restore state (i.e. Remove guess constraint)
                 # Only remove guess constraint when it can't be attained, not when sat.
 
