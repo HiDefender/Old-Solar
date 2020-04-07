@@ -18,7 +18,7 @@ s = Solver()
 cps_hi = 3.0
 cps_lo = 1.0
 assert(cps_hi > cps_lo)
-cps_res = 0.05
+cps_res = 0.005
 # -Easy SAT and clearly UNSAT problems are solved quickly.
 # -The solver learns more from solving SAT problems.
 #   Therefore search begins at cps_lo and increases each time by initial_step_up.
@@ -28,7 +28,7 @@ initial_lo_to_hi_ratio_step_up = 1/10
 initial_step_up = (cps_hi - cps_lo) * initial_lo_to_hi_ratio_step_up
 # The number of miliseconds the solver should spend on any single iteration.
 #   Higher is better and slower.
-timeout = timedelta(minutes=2)
+timeout = timedelta(minutes=10)
 # Ignores all n_grams (except single alphabet characters) with a frequency below the cutoff.
 #   Lower is better and slower.
 cutoff = 8000000
@@ -201,51 +201,47 @@ for i in range(26, len(n_gram)):
 # 2nd Note: Unintuitively the masking is faster in this instance then using extract as in
 #   the constraint blocking same finger (LR) presses above.
 cost = [ Real('rc%s' % i) for i in range(len(n_gram)) ]
-null_n_gram_cost = [ Real('nc%s' % i) for i in range(len(n_gram)) ]
-s.add( [ cost[i] == \
-    If(And(Extract(11, 11, G[i]) == 1, Extract(10, 10, G[i]) == 1),  0.5 / len(n_gram[i]), #  110 000 000 000
-    If(And(Extract(10, 10, G[i]) == 1, Extract(9 , 9 , G[i]) == 1),  0.5 / len(n_gram[i]), #  011 000 000 000
-    If(And(Extract(8 , 8 , G[i]) == 1, Extract(7 , 7 , G[i]) == 1),  0.5 / len(n_gram[i]), #  000 110 000 000
-    If(And(Extract(7 , 7 , G[i]) == 1, Extract(6 , 6 , G[i]) == 1),  0.5 / len(n_gram[i]), #  000 011 000 000
-    If(And(Extract(5 , 5 , G[i]) == 1, Extract(4 , 4 , G[i]) == 1),  0.5 / len(n_gram[i]), #  000 000 110 000
-    If(And(Extract(4 , 4 , G[i]) == 1, Extract(3 , 3 , G[i]) == 1),  0.5 / len(n_gram[i]), #  000 000 011 000
-    If(And(Extract(2 , 2 , G[i]) == 1, Extract(1 , 1 , G[i]) == 1),  0.5 / len(n_gram[i]), #  000 000 000 110
-    If(And(Extract(1 , 1 , G[i]) == 1, Extract(0 , 0 , G[i]) == 1),  0.5 / len(n_gram[i]), #  000 000 000 011
-    If(Extract(0 , 0 , G[i]) == 1,  0.5 / len(n_gram[i]), #  000 000 000 001
-    If(Extract(1 , 1 , G[i]) == 1,  0.5 / len(n_gram[i]), #  000 000 000 010
-    If(Extract(2 , 2 , G[i]) == 1,  0.5 / len(n_gram[i]), #  000 000 000 100
-    If(Extract(3 , 3 , G[i]) == 1,  0.5 / len(n_gram[i]), #  000 000 001 000
-    If(Extract(4 , 4 , G[i]) == 1,  0.5 / len(n_gram[i]), #  000 000 010 000
-    If(Extract(5 , 5 , G[i]) == 1,  0.5 / len(n_gram[i]), #  000 000 100 000
-    If(Extract(6 , 6 , G[i]) == 1,  0.5 / len(n_gram[i]), #  000 001 000 000
-    If(Extract(7 , 7 , G[i]) == 1,  0.5 / len(n_gram[i]), #  000 010 000 000
-    If(Extract(8 , 8 , G[i]) == 1,  0.5 / len(n_gram[i]), #  000 100 000 000
-    If(Extract(9 , 9 , G[i]) == 1,  0.5 / len(n_gram[i]), #  001 000 000 000
-    If(Extract(10, 10, G[i]) == 1,  0.5 / len(n_gram[i]), #  010 000 000 000
-    If(Extract(11, 11, G[i]) == 1,  0.5 / len(n_gram[i]), #  100 000 000 000
-    #  This can only be reached if the n-gram has a null assignment (is assigned no chord)
-    #   We set it equal to null_n_gram_cost[i], null_n_gram_cost is just a placeholder to 
-    #   prevent verbose code.
-    null_n_gram_cost[i])))))))))))))))))))) \
-        for i in range(len(n_gram)) \
-        ] )
+# null_n_gram_cost = [ Real('nc%s' % i) for i in range(len(n_gram)) ]
+for i in range(len(n_gram)):
+    if len(n_gram[i]) > 1:
+        if len(n_gram[i]) == 2:
+            null_assignment = cost[index_of[n_gram[i][0]]] + cost[index_of[n_gram[i][1]]]
+        elif len(n_gram[i]) == 3:
+            null_assignment = cost[index_of[n_gram[i][0]]] + cost[index_of[n_gram[i][1]]] + cost[index_of[n_gram[i][2]]]
+        elif len(n_gram[i]) == 4:
+            null_assignment = cost[index_of[n_gram[i][0]]] + cost[index_of[n_gram[i][1]]] + cost[index_of[n_gram[i][2]]] + cost[index_of[n_gram[i][3]]]
+        elif len(n_gram[i]) == 5:
+            null_assignment = cost[index_of[n_gram[i][0]]] + cost[index_of[n_gram[i][1]]] + cost[index_of[n_gram[i][2]]] + cost[index_of[n_gram[i][3]]] + cost[index_of[n_gram[i][4]]]
+        else:
+            assert(2 + 2 == 5) # Model isn't programmed to handle 6_grams or larger.
+    else:
+        null_assignment = 1000 # Null_assignment should be unreachable for 1_grams anyway.
 
-# null_n_gram_cost is the cost of entering a n_gram using smaller n_grams
-#   For simplicity the cost of a null_n_gram is the cost of all the characters.
-#   Feel free to expand this feature
-# ********************************
-# The no single character can have a null chord so we skip the first 26.
-for i in range(26, len(n_gram)):
-    assert len(n_gram[i]) > 1
-    if len(n_gram[i]) == 2:
-        s.add(null_n_gram_cost[i] == cost[index_of[n_gram[i][0]]] + cost[index_of[n_gram[i][1]]])
-    elif len(n_gram[i]) == 3:
-        s.add(null_n_gram_cost[i] == cost[index_of[n_gram[i][0]]] + cost[index_of[n_gram[i][1]]] + cost[index_of[n_gram[i][2]]])
-    elif len(n_gram[i]) == 4:
-        s.add(null_n_gram_cost[i] == cost[index_of[n_gram[i][0]]] + cost[index_of[n_gram[i][1]]] + cost[index_of[n_gram[i][2]]] + cost[index_of[n_gram[i][3]]])
-    elif len(n_gram[i]) == 5:
-        s.add(null_n_gram_cost[i] == cost[index_of[n_gram[i][0]]] + cost[index_of[n_gram[i][1]]] + cost[index_of[n_gram[i][2]]] + cost[index_of[n_gram[i][3]]] + cost[index_of[n_gram[i][4]]])
-
+    s.add( cost[i] == \
+        If(And(Extract(11, 11, G[i]) == 1, Extract(10, 10, G[i]) == 1),  0.5 / len(n_gram[i]), #  110 000 000 000
+        If(And(Extract(10, 10, G[i]) == 1, Extract(9 , 9 , G[i]) == 1),  0.5 / len(n_gram[i]), #  011 000 000 000
+        If(And(Extract(8 , 8 , G[i]) == 1, Extract(7 , 7 , G[i]) == 1),  0.5 / len(n_gram[i]), #  000 110 000 000
+        If(And(Extract(7 , 7 , G[i]) == 1, Extract(6 , 6 , G[i]) == 1),  0.5 / len(n_gram[i]), #  000 011 000 000
+        If(And(Extract(5 , 5 , G[i]) == 1, Extract(4 , 4 , G[i]) == 1),  0.5 / len(n_gram[i]), #  000 000 110 000
+        If(And(Extract(4 , 4 , G[i]) == 1, Extract(3 , 3 , G[i]) == 1),  0.5 / len(n_gram[i]), #  000 000 011 000
+        If(And(Extract(2 , 2 , G[i]) == 1, Extract(1 , 1 , G[i]) == 1),  0.5 / len(n_gram[i]), #  000 000 000 110
+        If(And(Extract(1 , 1 , G[i]) == 1, Extract(0 , 0 , G[i]) == 1),  0.5 / len(n_gram[i]), #  000 000 000 011
+        If(Extract(0 , 0 , G[i]) == 1,  0.5 / len(n_gram[i]), #  000 000 000 001
+        If(Extract(1 , 1 , G[i]) == 1,  0.5 / len(n_gram[i]), #  000 000 000 010
+        If(Extract(2 , 2 , G[i]) == 1,  0.5 / len(n_gram[i]), #  000 000 000 100
+        If(Extract(3 , 3 , G[i]) == 1,  0.5 / len(n_gram[i]), #  000 000 001 000
+        If(Extract(4 , 4 , G[i]) == 1,  0.5 / len(n_gram[i]), #  000 000 010 000
+        If(Extract(5 , 5 , G[i]) == 1,  0.5 / len(n_gram[i]), #  000 000 100 000
+        If(Extract(6 , 6 , G[i]) == 1,  0.5 / len(n_gram[i]), #  000 001 000 000
+        If(Extract(7 , 7 , G[i]) == 1,  0.5 / len(n_gram[i]), #  000 010 000 000
+        If(Extract(8 , 8 , G[i]) == 1,  0.5 / len(n_gram[i]), #  000 100 000 000
+        If(Extract(9 , 9 , G[i]) == 1,  0.5 / len(n_gram[i]), #  001 000 000 000
+        If(Extract(10, 10, G[i]) == 1,  0.5 / len(n_gram[i]), #  010 000 000 000
+        If(Extract(11, 11, G[i]) == 1,  0.5 / len(n_gram[i]), #  100 000 000 000
+        #  This can only be reached if the n-gram has a null assignment (is assigned no chord)
+        #   We set it equal to null_n_gram_cost[i], null_n_gram_cost is just a placeholder to 
+        #   prevent verbose code.
+        null_assignment)))))))))))))))))))))
 
 # cumulative_cost is cost times frequency.
 cumulative_cost = [ Real('cc%s' % i) for i in range(len(n_gram)) ]
@@ -324,7 +320,7 @@ while min(lo_unsat, lo_unknown, cps_hi) - max(hi_sat, cps_lo) > cps_res:
     # s.pop() # Restore state (i.e. Remove guess constraint)
 
 print("---------------------------------------")
-print(f"Sat: {hi_sat}, Unknown: {lo_unknown}, Unsat: {lo_unsat}")
+print(f"Sat: {hi_sat:.4f}, Unknown: {lo_unknown:.4f}, Unsat: {lo_unsat:.4f}")
 print(f"Total Time: {total_time}")
 print("---------------------------------------")
 
