@@ -18,7 +18,7 @@ s = Solver()
 cps_hi = 3.0
 cps_lo = 1.0
 assert(cps_hi > cps_lo)
-cps_res = 0.005
+cps_res = 0.1
 # -Easy SAT and clearly UNSAT problems are solved quickly.
 # -The solver learns more from solving SAT problems.
 #   Therefore search begins at cps_lo and increases each time by initial_step_up.
@@ -28,7 +28,7 @@ initial_lo_to_hi_ratio_step_up = 1/10
 initial_step_up = (cps_hi - cps_lo) * initial_lo_to_hi_ratio_step_up
 # The number of miliseconds the solver should spend on any single iteration.
 #   Higher is better and slower.
-timeout = timedelta(minutes=10)
+timeout = timedelta(seconds=15)
 # Ignores all n_grams (except single alphabet characters) with a frequency below the cutoff.
 #   Lower is better and slower.
 cutoff = 8000000
@@ -348,6 +348,8 @@ def print_config(d):
         if x not in d:
             d[x] = ""
     # print(f[0].sort())
+    print(f'|--------------------------------|')
+    print(f'|  Left       Middle       Right |')
     print(f'|--------------------------------|')
     print(f'| [{d[f[0]]:4}] {d[f[1]]:4} [{d[f[2]]:4}] {d[f[3]]:4} [{d[f[4]]:4}] |')
     print(f'|                                |')
