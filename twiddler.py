@@ -72,6 +72,7 @@ count.extend(t2)
 t1, t2 = load("english_quintgrams.txt", cutoff)
 n_gram.extend(t1)
 count.extend(t2)
+assert len(count) == len(n_gram)
 
 # We create a dictionary to quickly lookup the index of all n_grams
 index_of = {}
@@ -122,6 +123,7 @@ for i in range(26, len(n_gram)):
 # In the above loop count[i] should never be subtracted from before it
 #   is added to total_count. This assestion checks this.
 assert(total_count == total_count_assertion_check)
+assert len(count) == len(n_gram)
 
 for i in range(len(n_gram)):
     # print(f'{n_gram[i]} {count[i]}')
@@ -129,6 +131,12 @@ for i in range(len(n_gram)):
         print("freq_prune is set too high!")
         sys.exit()
 print(f"Removed {total_removal * 100 / total_count:.2f}% of frequency count as excess.")
+
+# Remove contradicting n-grams.
+# Suppose two n-grams share the same letters.
+#   Ex: "HE" and "EH", with freqs 100689263 and 7559141 respectively.
+#   Both cannot be assigned, so remove the less frequent one.
+
 
 # ***************************************
 # Problem Definition and hard constraints
@@ -348,8 +356,9 @@ def print_config(d):
         if x not in d:
             d[x] = ""
     # print(f[0].sort())
-    print(f'|--------------------------------|')
-    print(f'|  Left       Middle       Right |')
+    print(f'\n   Left       Middle       Right')
+    print(f' ________________________________')
+    print(f'|              Space      BckSpc | <-- Mouseclick buttons')
     print(f'|--------------------------------|')
     print(f'| [{d[f[0]]:4}] {d[f[1]]:4} [{d[f[2]]:4}] {d[f[3]]:4} [{d[f[4]]:4}] |')
     print(f'|                                |')
@@ -364,7 +373,7 @@ def print_config(d):
     print(f'|  {d[f[25]]:4}  {d[f[26]]:4}  {d[f[27]]:4}  {d[f[28]]:4}  {d[f[29]]:4}  |')
     print(f'|                                |')
     print(f'| [{d[f[30]]:4}] {d[f[31]]:4} [{d[f[32]]:4}] {d[f[33]]:4} [{d[f[34]]:4}] |')
-    print(f'|--------------------------------|')
+    print(f'|________________________________|')
 
 # We generate a dictionary where the chords are the keys and n_grams the values.
 num_2 = 0
