@@ -25,13 +25,13 @@ def create_dict(n_grams, count):
         total_count_assertion_check += count[i]
     return index, total_count_assertion_check
 
-def prune_excess_counts(p, n_grams, count):
+def prune_excess_counts(p, n_grams, count, alphabet_size):
     index, total_count_assertion_check = create_dict(n_grams, count)
 
     # Setup for some assertion checking below.
     total_removal = 0
     total_count = 0
-    for i in range(26):
+    for i in range(alphabet_size):
         total_count += count[i]
     # Remove excess counting.
     # Frequency of "H" is 216768975, but the frequency of "TH" is 116997844.
@@ -43,7 +43,7 @@ def prune_excess_counts(p, n_grams, count):
     #   freq_prune ratio.
     # Therefore the adjustment is as follows:
     #   i-gram_frequency -= (i + 1)-gram_frequency * (k / (k + 1)) * p.freq_prune
-    for i in range(26, len(n_grams)):
+    for i in range(alphabet_size, len(n_grams)):
         total_count += count[i]
         l = len(n_grams[i])
         a = n_grams[i][1:] # Get all but the first letter.
@@ -77,12 +77,14 @@ def prune_excess_counts(p, n_grams, count):
 
 @dataclass
 class NGrams:
+    alphabet_size: int
     grams: list = field(default_factory=lambda: [])
     count: list = field(default_factory=lambda: [])
     index: dict = field(default_factory=lambda : {})
 
     def load_n_grams(p):
         n_grams, count = load_files(p.alphabet_file, 0)
+        alphabet_size = len(n_grams)
         t1, t2 = load_files(p.bigrams_file, p.cutoff)
         n_grams.extend(t1)
         count.extend(t2)
@@ -92,5 +94,5 @@ class NGrams:
             count.extend(t2)
         assert len(count) == len(n_grams)
 
-        index = prune_excess_counts(p, n_grams, count)
-        return NGrams(grams=n_grams, count=count, index=index)
+        index = prune_excess_counts(p, n_grams, count, alphabet_size)
+        return NGrams(alphabet_size, grams=n_grams, count=count, index=index)

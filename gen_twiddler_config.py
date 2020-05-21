@@ -9,7 +9,7 @@ setupTime = datetime.now()
 s = Solver() 
 p = lib.Parameters.setup()
 n = lib.NGrams.load_n_grams(p)
-
+t = lib.problem_def(s, n)
 
 # Remove contradicting n-grams.
 # Suppose two n-grams share the same letters.
@@ -17,30 +17,7 @@ n = lib.NGrams.load_n_grams(p)
 #   Both cannot be assigned, so remove the less frequent one.
 
 
-# ***************************************
-# Problem Definition and hard constraints
-#  -Hard constraints cannot be violated
-# ***************************************
 
-# Let the bit-vector represent a button combo with this correspondance:
-# Index(LMR) Middle(LMR) Ring(LMR) Pinky(LMR)
-#       000         000       000        000
-G = [ BitVec('g%s' % i, 12) for i in range(len(n.grams))]
-
-# For any finger the combination (LR) or (LMR) is illegal,
-#   because it is too hard to do in practice.
-s.add([ Not(And(Extract(11, 11, G[i]) == 1, Extract(9, 9, G[i]) == 1))  for i in range(len(n.grams)) ]) # index_con
-s.add([ Not(And(Extract(8 , 8 , G[i]) == 1, Extract(6, 6, G[i]) == 1))  for i in range(len(n.grams)) ]) # middle_con
-s.add([ Not(And(Extract(5 , 5 , G[i]) == 1, Extract(3, 3, G[i]) == 1))  for i in range(len(n.grams)) ]) # ring_con
-s.add([ Not(And(Extract(2 , 2 , G[i]) == 1, Extract(0, 0, G[i]) == 1))  for i in range(len(n.grams)) ]) # pinky_con
-
-# No two n_grams can have the same combo
-#   Exception for 0 which is the null assignment
-for i in range(len(n.grams) - 1):
-    s.add( [ Or(G[i] == 0, G[i] != G[j]) for j in range(i + 1, len(n.grams)) ] )
-
-# No single characters can have a null assignment.
-s.add( [ G[i] != 0 for i in range(26) ] )
 
 # ***************************************
 # Design principles as hard constraints
@@ -48,7 +25,7 @@ s.add( [ G[i] != 0 for i in range(26) ] )
 
 # Multi-character chords shold be made up of combination of single character chords
 # -This is taken from TabSpace philosophy: https://rhodesmill.org/brandon/projects/tabspace-guide.pdf
-for i in range(26, len(n.grams)):
+for i in range(n.alphabet_size, len(n.grams)):
     assert len(n.grams[i]) > 1
     # Either
     #   n_gram must be union of letters that make up the n_gram
