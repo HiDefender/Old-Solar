@@ -12,9 +12,9 @@ class Parameters:
     #   range for the highest CPS it can find. It will quit once the difference between the
     #   highest satisfiable (sat) solution and the lowest unsatisfiable/timeout (unsat/unknown)
     #   is less than the resolution.
-    cps_hi: float = 3.0
-    cps_lo: float = 1.0
-    cps_res: float = 0.1
+    cps_hi: float = 5.0
+    cps_lo: float = 0.0
+    cps_res: float = 0.001
     # -Easy SAT and clearly UNSAT problems are solved quickly.
     # -The solver learns more from solving SAT problems.
     #   Therefore search begins at cps_lo and increases each time by initial_step_up.
@@ -23,7 +23,7 @@ class Parameters:
     initial_lo_to_hi_ratio_step_up: float = 1/10
     # The number of miliseconds the solver should spend on any single iteration.
     #   Higher is better and slower.
-    timeout: timedelta = timedelta(seconds=15)
+    timeout: timedelta = timedelta(minutes=5)
     # Ignores all n_grams (except single alphabet characters) with a frequency below the cutoff.
     #   Lower is better and slower.
     cutoff: int = 8000000
@@ -37,6 +37,8 @@ class Parameters:
                         ["english_trigrams.txt",
                         "english_quadgrams.txt",
                         "english_quintgrams.txt"])
+    stride: float = 0.5
+    stutter: float = 0.75
 
 
     def setup():
