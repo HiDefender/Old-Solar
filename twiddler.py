@@ -159,18 +159,21 @@ while min(lo_unsat, lo_unknown, p.cps_hi) - max(hi_sat, p.cps_lo) > p.cps_res:
     s.push() # Create new state
     s.add(b.cumulative_cost[len(n.grams)-1] <= guess_max_cumulative_cost)
     
-    print(f"CPS: {guess_cps:.4f} - ", flush=True, end="")
+    
     result = s.check()
     guess_time = datetime.now() - solveTime
     total_time += guess_time
-    print(f"{str(result):7} - {guess_time}")
+    if guess_time >= p.min_print_time:
+        print(f"CPS: {guess_cps:.4f} - {str(result):7} - {guess_time} ")
+    else:
+        print(f".", flush=True, end="")
 
     sys.stdout = f
-    print(f"CPS: {guess_cps:.4f} - {str(result):7} - {guess_time}")
     if result == sat:
         hi_sat = guess_cps
         m = s.model()
-        print_details(m)
+        if guess_time >= p.min_print_time:
+            print_details(m)
     elif result == unsat:
         lo_unsat = guess_cps
         search_has_failed = True
@@ -185,12 +188,15 @@ while min(lo_unsat, lo_unknown, p.cps_hi) - max(hi_sat, p.cps_lo) > p.cps_res:
 
     # s.pop() # Restore state (i.e. Remove guess constraint)
 
-f.close()
 print("---------------------------------------")
 print(f"Sat: {hi_sat:.4f}, Unknown: {lo_unknown:.4f}, Unsat: {lo_unsat:.4f}")
 print(f"Total Time: {total_time}")
 print("---------------------------------------")
 
+sys.stdout = f
+print_details(m)
+sys.stdout = sys.__stdout__
+f.close()
 
 print_details(m)
 # ******************************************************

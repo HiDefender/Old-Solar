@@ -26,6 +26,8 @@ class Parameters:
     # The number of miliseconds the solver should spend on any single iteration.
     #   Higher is better and slower.
     timeout: timedelta = timedelta(minutes=300)
+    # Only print if solver runs longer than:
+    min_print_time: timedelta = timedelta(minutes=5)
     # Ignores all n_grams (except single alphabet characters) with a frequency below the cutoff.
     #   Lower is better and slower.
     cutoff: int = 50000000
@@ -52,6 +54,7 @@ class Parameters:
         print(f'Hi: {p.cps_hi}, Lo: {p.cps_lo}, Resolution: {p.cps_res}')
         print(f'Timeout: {p.timeout}, Cutoff: {p.cutoff}, Freq_prune: {p.freq_prune:.2f}')
         print(f"Stride discount: {p.stride}, Stutter discount: {p.stutter}")
+        print(f"If not last SAT solution print to STDOUT and file only if timer exceeds: {p.min_print_time}")
         print("---------------------------------------")
         return p
 
