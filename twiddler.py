@@ -6,17 +6,28 @@ import sys
 
 # def run():
 setupTime = datetime.now()
-s = Solver() 
+s = Solver()
+set_option(max_args=10000000, max_lines=1000000, max_depth=10000000, max_visited=1000000)
 p = lib.Parameters.setup()
 n = lib.NGrams.load_n_grams(p)
-print(len(n.grams))
 b = lib.problem_def(s, n)
-print(len(n.grams))
 lib.mcc_from_scc(s, n, b)
-print(len(n.grams))
 lib.cost_mcc(s, n, b)
-lib.cost_scc(s, n, b)
-print(f"last: {len(n.grams)}")
+lib.cost_scc(p, s, n, b)
+
+# E, S, D, N, T, R, F, Y frequently end words, so we don't want them
+#   using the index finger, so they stride with SPACE.
+s.add(Extract(11, 11, b.F[n.index['E']]) == 0)
+s.add(Extract(11, 11, b.F[n.index['S']]) == 0)
+s.add(Extract(11, 11, b.F[n.index['D']]) == 0)
+s.add(Extract(11, 11, b.F[n.index['N']]) == 0)
+s.add(Extract(11, 11, b.F[n.index['T']]) == 0)
+s.add(Extract(11, 11, b.F[n.index['R']]) == 0)
+s.add(Extract(11, 11, b.F[n.index['F']]) == 0)
+s.add(Extract(11, 11, b.F[n.index['Y']]) == 0)
+
+# If E cannot use *M** can it achieve 2.6846? If not fix E here.
+# s.add(Extract(7, 7, b.G[n.index['E']]) == 0)
 
 
 # If cost of chords is given in seconds then cumulative_cost[len(n.grams)-1] is
@@ -25,13 +36,19 @@ print(f"last: {len(n.grams)}")
 # We can use this to calculate average characters per second:
 # 1 / (cumulative_cost[len(n.grams)-1] / total_count) this simplifies to:
 # total_count / cumulative_cost[len(n.grams)-1]
-total_count = 0
-for x in n.count:
-    total_count += x
-total_count = RealVal(total_count)
+mcc_total_chars = 0
+for i in range(len(n.count)):
+    mcc_total_chars += n.count[i] * len(n.grams[i])
+stride_total_chars = 0
+for i in range(n.bi_gram_size):
+    stride_total_chars += b.bi_count[i] * 2
+total_count = RealVal(mcc_total_chars * (1 - p.stride_wt) +
+                      stride_total_chars * p.stride_wt)
+print(f"Total count: {total_count}")
 chars_per_second = Real("cps")
-print(len(b.cumulative_cost))
-s.add(chars_per_second == total_count / b.cumulative_cost[len(n.grams)-1])
+s.add(chars_per_second == total_count /
+    (b.cumulative_cost[len(n.grams)-1] * (1 - p.stride_wt) +
+    b.cum_stride_cost[n.bi_gram_size-1] * p.stride_wt))
 
 # **************************************************
 # Sit back relax and let the SMT solver do the work.
@@ -42,6 +59,8 @@ s.set("timeout", (p.timeout.days * 24 * 60 * 60 + p.timeout.seconds) * 1000)
 total_time = datetime.now() - setupTime
 print(f"N-Grams: {str(len(n.grams))}, Setup Time: {total_time}")
 print("---------------------------------------")
+# print(s)
+# print("---------------------------------------")
 
 hi_sat = 0
 lo_unsat = float("inf")
@@ -59,7 +78,8 @@ while min(lo_unsat, lo_unknown, p.cps_hi) - max(hi_sat, p.cps_lo) > p.cps_res:
     if not search_has_failed:
         guess_cps = max(hi_sat, p.cps_lo - p.initial_step_up()) + p.initial_step_up()
     else:
-        guess_cps = (min(lo_unsat, lo_unknown, p.cps_hi) + max(hi_sat, p.cps_lo)) / 2
+        guess_cps = p.after_failure_step_up(min(lo_unsat, lo_unknown, p.cps_hi),
+                                            max(hi_sat, p.cps_lo))
 
     # For some reason the solver cannot handle this constraint:
     #   s.add(chars_per_second >= cps)
@@ -68,10 +88,11 @@ while min(lo_unsat, lo_unknown, p.cps_hi) - max(hi_sat, p.cps_lo) > p.cps_res:
     s.push() # Create new state
     s.add(b.cumulative_cost[len(n.grams)-1] <= guess_max_cumulative_cost)
     
+    print(f"CPS: {guess_cps:.4f} - ", flush=True, end="")
     result = s.check()
     guess_time = datetime.now() - solveTime
     total_time += guess_time
-    print(f"CPS: {guess_cps:.4f} - {str(result):7} - {datetime.now() - solveTime}")
+    print(f"{str(result):7} - {datetime.now() - solveTime}")
 
     if result == sat:
         hi_sat = guess_cps

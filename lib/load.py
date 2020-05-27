@@ -78,6 +78,7 @@ def prune_excess_counts(p, n_grams, count, alphabet_size):
 @dataclass
 class NGrams:
     alphabet_size: int
+    bi_gram_size: int = 0
     grams: list = field(default_factory=lambda: [])
     count: list = field(default_factory=lambda: [])
     index: dict = field(default_factory=lambda : {})
@@ -93,7 +94,6 @@ class NGrams:
             n_grams.extend(t1)
             count.extend(t2)
         assert len(count) == len(n_grams)
-        print(len(n_grams))
 
         index = prune_excess_counts(p, n_grams, count, alphabet_size)
         return NGrams(alphabet_size, grams=n_grams, count=count, index=index)
