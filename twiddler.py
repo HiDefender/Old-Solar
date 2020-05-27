@@ -50,71 +50,6 @@ s.add(chars_per_second == total_count /
     (b.cumulative_cost[len(n.grams)-1] * (1 - p.stride_wt) +
     b.cum_stride_cost[n.bi_gram_size-1] * p.stride_wt))
 
-# **************************************************
-# Sit back relax and let the SMT solver do the work.
-# **************************************************
-
-# Timeout is given in milliseconds
-s.set("timeout", (p.timeout.days * 24 * 60 * 60 + p.timeout.seconds) * 1000)
-total_time = datetime.now() - setupTime
-print(f"N-Grams: {str(len(n.grams))}, Setup Time: {total_time}")
-print("---------------------------------------")
-# print(s)
-# print("---------------------------------------")
-
-hi_sat = 0
-lo_unsat = float("inf")
-lo_unknown = float("inf")
-search_has_failed = False
-m = None
-# See comments above in "Guide the Search" for understanding how this works.
-while min(lo_unsat, lo_unknown, p.cps_hi) - max(hi_sat, p.cps_lo) > p.cps_res:
-    # print(f"lo_unsat: {lo_unsat}, lo_unknown: {lo_unknown}, p.cps_hi: {p.cps_hi}, hi_sat: {hi_sat}, p.cps_lo: {p.cps_lo}, p.cps_res: {p.cps_res}")
-    solveTime = datetime.now()
-
-    # We start from p.cps_lo initially and increment up by initial_step_up
-    #   until we encounter an UNSAT or UNKNOWN problem then we begin
-    #   binary search.
-    if not search_has_failed:
-        guess_cps = max(hi_sat, p.cps_lo - p.initial_step_up()) + p.initial_step_up()
-    else:
-        guess_cps = p.after_failure_step_up(min(lo_unsat, lo_unknown, p.cps_hi),
-                                            max(hi_sat, p.cps_lo))
-
-    # For some reason the solver cannot handle this constraint:
-    #   s.add(chars_per_second >= cps)
-    #   So we calclate max cumulative cost and set the limit that way.
-    guess_max_cumulative_cost = total_count / guess_cps
-    s.push() # Create new state
-    s.add(b.cumulative_cost[len(n.grams)-1] <= guess_max_cumulative_cost)
-    
-    print(f"CPS: {guess_cps:.4f} - ", flush=True, end="")
-    result = s.check()
-    guess_time = datetime.now() - solveTime
-    total_time += guess_time
-    print(f"{str(result):7} - {datetime.now() - solveTime}")
-
-    if result == sat:
-        hi_sat = guess_cps
-        m = s.model()
-    elif result == unsat:
-        lo_unsat = guess_cps
-        search_has_failed = True
-        s.pop() # Restore state (i.e. Remove guess constraint)
-                # Only remove guess constraint when it can't be attained, not when sat.
-    elif result == unknown:
-        lo_unknown = guess_cps
-        search_has_failed = True
-        s.pop() # Restore state (i.e. Remove guess constraint)
-                # Only remove guess constraint when it can't be attained, not when sat.
-
-    # s.pop() # Restore state (i.e. Remove guess constraint)
-
-print("---------------------------------------")
-print(f"Sat: {hi_sat:.4f}, Unknown: {lo_unknown:.4f}, Unsat: {lo_unsat:.4f}")
-print(f"Total Time: {total_time}")
-print("---------------------------------------")
-
 
 # ******************************************************
 # Print out quick view of what configuration looks like.
@@ -158,32 +93,106 @@ def print_config(d):
     print(f'| [{d[f[30]]:4}] {d[f[31]]:4} [{d[f[32]]:4}] {d[f[33]]:4} [{d[f[34]]:4}] |')
     print(f'|________________________________|')
 
-# We generate a dictionary where the chords are the keys and n_grams the values.
-num_2 = 0
-num_3 = 0
-num_4 = 0
-num_5 = 0
-press_lookup = {}
-for i in range(len(n.grams)):
-    if m[b.G[i]] in press_lookup:
-        assert m[b.G[i]] == 0
-    else:
-        press_lookup[int(str(m[b.G[i]]))] = n.grams[i]
-        if len(n.grams[i]) == 2:
-            # print("i: " + str(i) + ", m[G[i]]: " + str(m[G[i]]) + ", n.grams: " + n.grams[i])
-            num_2 += 1
-        elif len(n.grams[i]) == 3:
-            num_3 += 1
-        elif len(n.grams[i]) == 4:
-            num_4 += 1
-        elif len(n.grams[i]) == 5:
-            num_5 += 1
-        elif len(n.grams[i]) == 1:
+def print_details(m):
+    # We generate a dictionary where the chords are the keys and n_grams the values.
+    num_2 = 0
+    num_3 = 0
+    num_4 = 0
+    num_5 = 0
+    press_lookup = {}
+    for i in range(len(n.grams)):
+        if m[b.G[i]] in press_lookup:
+            assert m[b.G[i]] == 0
+        else:
+            press_lookup[int(str(m[b.G[i]]))] = n.grams[i]
+            if len(n.grams[i]) == 2:
+                # print("i: " + str(i) + ", m[G[i]]: " + str(m[G[i]]) + ", n.grams: " + n.grams[i])
+                num_2 += 1
+            elif len(n.grams[i]) == 3:
+                num_3 += 1
+            elif len(n.grams[i]) == 4:
+                num_4 += 1
+            elif len(n.grams[i]) == 5:
+                num_5 += 1
+            # elif len(n.grams[i]) == 1:
             print("i: " + str(i) + ", m[G[i]]: " + str(m[b.G[i]]) + ", n_gram: " + n.grams[i])
-print(f'Chorded-2_grams: {num_2}, 3_grams: {num_3}, 4_grams: {num_4}, 5_grams: {num_5}')
+    print(f'Chorded-2_grams: {num_2}, 3_grams: {num_3}, 4_grams: {num_4}, 5_grams: {num_5}')
+    
+    print_config(press_lookup)
 
-print_config(press_lookup)
+# **************************************************
+# Sit back relax and let the SMT solver do the work.
+# **************************************************
 
+# Timeout is given in milliseconds
+s.set("timeout", (p.timeout.days * 24 * 60 * 60 + p.timeout.seconds) * 1000)
+total_time = datetime.now() - setupTime
+print(f"N-Grams: {str(len(n.grams))}, Setup Time: {total_time}")
+print("---------------------------------------")
+# print(s)
+# print("---------------------------------------")
+
+hi_sat = 0
+lo_unsat = float("inf")
+lo_unknown = float("inf")
+search_has_failed = False
+m = None
+f = open("config.txt", "a")
+# See comments above in "Guide the Search" for understanding how this works.
+while min(lo_unsat, lo_unknown, p.cps_hi) - max(hi_sat, p.cps_lo) > p.cps_res:
+    # print(f"lo_unsat: {lo_unsat}, lo_unknown: {lo_unknown}, p.cps_hi: {p.cps_hi}, hi_sat: {hi_sat}, p.cps_lo: {p.cps_lo}, p.cps_res: {p.cps_res}")
+    solveTime = datetime.now()
+
+    # We start from p.cps_lo initially and increment up by initial_step_up
+    #   until we encounter an UNSAT or UNKNOWN problem then we begin
+    #   binary search.
+    if not search_has_failed:
+        guess_cps = max(hi_sat, p.cps_lo - p.initial_step_up()) + p.initial_step_up()
+    else:
+        guess_cps = p.after_failure_step_up(min(lo_unsat, lo_unknown, p.cps_hi),
+                                            max(hi_sat, p.cps_lo))
+
+    # For some reason the solver cannot handle this constraint:
+    #   s.add(chars_per_second >= cps)
+    #   So we calclate max cumulative cost and set the limit that way.
+    guess_max_cumulative_cost = total_count / guess_cps
+    s.push() # Create new state
+    s.add(b.cumulative_cost[len(n.grams)-1] <= guess_max_cumulative_cost)
+    
+    print(f"CPS: {guess_cps:.4f} - ", flush=True, end="")
+    result = s.check()
+    guess_time = datetime.now() - solveTime
+    total_time += guess_time
+    print(f"{str(result):7} - {guess_time}")
+
+    sys.stdout = f
+    print(f"CPS: {guess_cps:.4f} - {str(result):7} - {guess_time}")
+    if result == sat:
+        hi_sat = guess_cps
+        m = s.model()
+        print_details(m)
+    elif result == unsat:
+        lo_unsat = guess_cps
+        search_has_failed = True
+        s.pop() # Restore state (i.e. Remove guess constraint)
+                # Only remove guess constraint when it can't be attained, not when sat.
+    elif result == unknown:
+        lo_unknown = guess_cps
+        search_has_failed = True
+        s.pop() # Restore state (i.e. Remove guess constraint)
+                # Only remove guess constraint when it can't be attained, not when sat.
+    sys.stdout = sys.__stdout__
+
+    # s.pop() # Restore state (i.e. Remove guess constraint)
+
+f.close()
+print("---------------------------------------")
+print(f"Sat: {hi_sat:.4f}, Unknown: {lo_unknown:.4f}, Unsat: {lo_unsat:.4f}")
+print(f"Total Time: {total_time}")
+print("---------------------------------------")
+
+
+print_details(m)
 # ******************************************************
 # TODO: Convert SMT solver output to configuration file.
 # ******************************************************

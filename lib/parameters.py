@@ -12,20 +12,20 @@ class Parameters:
     #   range for the highest CPS it can find. It will quit once the difference between the
     #   highest satisfiable (sat) solution and the lowest unsatisfiable/timeout (unsat/unknown)
     #   is less than the resolution.
-    cps_hi: float = 3.0
-    cps_lo: float = 2.0
-    cps_res: float = 0.01
+    cps_hi: float = 5.0
+    cps_lo: float = 0.0
+    cps_res: float = 0.00000000001
     # -Easy SAT and clearly UNSAT problems are solved quickly.
     # -The solver learns more from solving SAT problems.
     #   Therefore search begins at cps_lo and increases each time by initial_step_up.
     #   Once the first UNSAT or UNKNOWN is encountered, binary search is used instead.
     #   Set initial_lo_to_hi_ratio_step_up to zero to enter binary search immediately.
-    initial_lo_to_hi_ratio_step_up: float = 1/100
+    initial_lo_to_hi_ratio_step_up: float = 1/10000
     #   After first failure increase guess more conservatively.
-    after_failure_step_up_ratio: float = 1/100
+    after_failure_step_up_ratio: float = 1/1000
     # The number of miliseconds the solver should spend on any single iteration.
     #   Higher is better and slower.
-    timeout: timedelta = timedelta(minutes=120)
+    timeout: timedelta = timedelta(minutes=300)
     # Ignores all n_grams (except single alphabet characters) with a frequency below the cutoff.
     #   Lower is better and slower.
     cutoff: int = 50000000
