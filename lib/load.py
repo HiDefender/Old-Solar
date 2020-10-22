@@ -34,11 +34,11 @@ def prune_excess_counts(p, n_grams, count, alphabet_size):
     for i in range(alphabet_size):
         total_count += count[i]
     # Remove excess counting.
-    # Frequency of "H" is 216768975, but the frequency of "TH" is 116997844.
+    # Frequency of "H" is 216,768,975, but the frequency of "TH" is 116,997,844.
     # Notice that "H" is counted multiple times, we want to remove the counts of all k-grams
     #   that are used in (k + 1)-grams so that the solver is incentivized to make a layout with
-    #   more combos. However, note that "H" appears in the 2-grams "TH" and "HE":
-    #   "H" 216768975 - "TH" 116997844 - "HE" 100689263 = -918132 which is clearly incorrect.
+    #   larger multi-character chords. However, note that "H" appears in the 2-grams "TH" and "HE":
+    #   "H" 216,768,975 - "TH" 116,997,844 - "HE" 100,689,263 = -918,132 which is clearly incorrect.
     # Finally, even when accounting for this we can still subtract too much, so we add a
     #   freq_prune ratio.
     # Therefore the adjustment is as follows:

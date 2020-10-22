@@ -3,6 +3,21 @@ from datetime import datetime, timedelta
 import lib
 import sys
 
+#ToDo:
+# 1) Rethink cost, both MCC and SCC
+# 2) Add pinky multi-button penalty, because the pinky is not as wide as the other characters.
+# 3) Add ghosting combos, which no MCC can be set to.
+# 4) Recalculate button press cost.
+# 5) Look into getting better frequency files.
+
+#Calculation method.
+# 1) Retain end of word forbidden characters.
+# 2) Run solver (possibly on reduced word set) and see what most freq char
+#       gets set to by the time solver stalls. Then forbid that char from
+#       being set to that scc/mcc. Run again with the highest sat from the
+#       previous run being set as the lowest sat. If this run is UNSAT then
+#       we know that the char in question must have the scc/mcc.
+#       Repeat with next highest freq char.
 
 # def run():
 setupTime = datetime.now()

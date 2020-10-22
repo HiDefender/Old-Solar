@@ -17,9 +17,9 @@ class Parameters:
     cps_res: float = 0.00000000001
     # -Easy SAT and clearly UNSAT problems are solved quickly.
     # -The solver learns more from solving SAT problems.
-    #   Therefore search begins at cps_lo and increases each time by initial_step_up.
-    #   Once the first UNSAT or UNKNOWN is encountered, binary search is used instead.
-    #   Set initial_lo_to_hi_ratio_step_up to zero to enter binary search immediately.
+    #   Therefore search begins at cps_lo and increases each time by initial_lo_to_hi_ratio_step_up.
+    #   Once the first UNSAT or UNKNOWN is encountered, after_failure_step_up_ratio is used instead.
+    #   Set initial_lo_to_hi_ratio_step_up to zero to enter after_failure_step_up_ratio immediately.
     initial_lo_to_hi_ratio_step_up: float = 1/10000
     #   After first failure increase guess more conservatively.
     after_failure_step_up_ratio: float = 1/1000
@@ -31,7 +31,6 @@ class Parameters:
     # Ignores all n_grams (except single alphabet characters) with a frequency below the cutoff.
     #   Lower is better and slower.
     cutoff: int = 50000000
-    # cutoff: int = 5998500
     # Affects how aggressively the frequency of k_grams is reduced when they are sub-strings of
     #   (k + 1)_grams. Set to 0 to turn off.
     freq_prune: float = 2/3
@@ -42,7 +41,11 @@ class Parameters:
                         ["english_trigrams.txt",
                         "english_quadgrams.txt",
                         "english_quintgrams.txt"])
+    #Striding is assumed to be faster than normal, this is the discount given to strides.
+    #   https://github.com/lancegatlin/typemax/blob/master/basic_layout_design.md#stride
     stride: float = 0.5
+    #Stuttering is assumed to be faster than normal, this is the discount given to stutters.
+    #   https://github.com/lancegatlin/typemax/blob/master/basic_layout_design.md#stutter
     stutter: float = 0.75
     stride_wt: float = 0.9
 
