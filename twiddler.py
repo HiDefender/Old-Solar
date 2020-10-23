@@ -19,13 +19,20 @@ import sys
 #       we know that the char in question must have the scc/mcc.
 #       Repeat with next highest freq char.
 
-# def run():
+# Twiddler BitVector Index
+#   L   M   R
+#   11  10  9 - Index
+#   8   7   6 - Middle
+#   5   4   3 - Ring
+#   2   1   0 - Pinky
+
 setupTime = datetime.now()
 s = Solver()
 set_option(max_args=10000000, max_lines=1000000, max_depth=10000000, max_visited=1000000)
 p = lib.Parameters.setup()
 n = lib.NGrams.load_n_grams(p)
 b = lib.problem_def(s, n)
+lib.ghost_combos(s, n, b)
 lib.mcc_from_scc(s, n, b)
 lib.cost_mcc(s, n, b)
 lib.cost_scc(p, s, n, b)
