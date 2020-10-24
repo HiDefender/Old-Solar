@@ -32,21 +32,26 @@ set_option(max_args=10000000, max_lines=1000000, max_depth=10000000, max_visited
 p = lib.Parameters.setup()
 n = lib.NGrams.load_n_grams(p)
 b = lib.problem_def(s, n)
-lib.ghost_combos(s, n, b)
+# lib.ghost_combos(s, n, b)
 lib.mcc_from_scc(s, n, b)
 lib.cost_mcc(s, n, b)
 lib.cost_scc(p, s, n, b)
 
-# E, S, D, N, T, R, F, Y frequently end words, so we don't want them
+# These letters frequently end words, so we don't want them
 #   using the index finger, so they stride with SPACE.
-s.add(Extract(11, 11, b.F[n.index['E']]) == 0)
-s.add(Extract(11, 11, b.F[n.index['S']]) == 0)
-s.add(Extract(11, 11, b.F[n.index['D']]) == 0)
-s.add(Extract(11, 11, b.F[n.index['N']]) == 0)
-s.add(Extract(11, 11, b.F[n.index['T']]) == 0)
-s.add(Extract(11, 11, b.F[n.index['R']]) == 0)
-s.add(Extract(11, 11, b.F[n.index['F']]) == 0)
-s.add(Extract(11, 11, b.F[n.index['Y']]) == 0)
+s.add(Extract(11, 11, b.F[n.index['E']]) == 0) #Ends 20.1% of words
+s.add(Extract(11, 11, b.F[n.index['S']]) == 0) #Ends 12.9% of words
+s.add(Extract(11, 11, b.F[n.index['D']]) == 0) #Ends 9.98% of words
+# s.add(Extract(11, 11, b.F[n.index['N']]) == 0) #Ends 9.31% of words
+# s.add(Extract(11, 11, b.F[n.index['T']]) == 0) #Ends 8.97% of words
+# s.add(Extract(11, 11, b.F[n.index['Y']]) == 0) #Ends 6.00% of words
+# s.add(Extract(11, 11, b.F[n.index['R']]) == 0) #Ends 5.90% of words
+# s.add(Extract(11, 11, b.F[n.index['F']]) == 0) #Ends 4.71% of words
+# s.add(Extract(11, 11, b.F[n.index['O']]) == 0) #Ends 4.18% of words
+# s.add(Extract(11, 11, b.F[n.index['L']]) == 0) #Ends 3.47% of words
+# s.add(Extract(11, 11, b.F[n.index['G']]) == 0) #Ends 2.94% of words
+# s.add(Extract(11, 11, b.F[n.index['A']]) == 0) #Ends 2.82% of words
+# s.add(Extract(11, 11, b.F[n.index['H']]) == 0) #Ends 2.71% of words
 
 # If E cannot use *M** can it achieve 2.6846? If not fix E here.
 # s.add(Extract(7, 7, b.G[n.index['E']]) == 0)
@@ -148,9 +153,9 @@ def print_details(m):
 
 # Timeout is given in milliseconds
 s.set("timeout", (p.timeout.days * 24 * 60 * 60 + p.timeout.seconds) * 1000)
-total_time = datetime.now() - setupTime
-print(f"N-Grams: {str(len(n.grams))}, Setup Time: {total_time}")
+print(f"N-Grams: {str(len(n.grams))}, Setup Time: {datetime.now() - setupTime}")
 print("---------------------------------------")
+print(f"CharsPerSec - Result  - Time:This Run  - Time:All Runs")
 # print(s)
 # print("---------------------------------------")
 
@@ -158,6 +163,9 @@ hi_sat = 0
 lo_unsat = float("inf")
 lo_unknown = float("inf")
 search_has_failed = False
+last_print_time = datetime.min
+last_sat_time = datetime.min
+solver_time = datetime.now()
 m = None
 f = open("config.txt", "a")
 # See comments above in "Guide the Search" for understanding how this works.
@@ -184,9 +192,9 @@ while min(lo_unsat, lo_unknown, p.cps_hi) - max(hi_sat, p.cps_lo) > p.cps_res:
     
     result = s.check()
     guess_time = datetime.now() - solveTime
-    total_time += guess_time
-    if guess_time >= p.min_print_time:
-        print(f"CPS: {guess_cps:.4f} - {str(result):7} - {guess_time} ")
+    if datetime.now() >= last_print_time + p.update_time:
+        last_print_time = datetime.now()
+        print(f"{guess_cps:.9f} - {str(result):7} - {guess_time} - {datetime.now() - solver_time}")
     else:
         print(f".", flush=True, end="")
 
@@ -194,7 +202,8 @@ while min(lo_unsat, lo_unknown, p.cps_hi) - max(hi_sat, p.cps_lo) > p.cps_res:
     if result == sat:
         hi_sat = guess_cps
         m = s.model()
-        if guess_time >= p.min_print_time:
+        if datetime.now() >= last_sat_time + p.sat_time:
+            last_sat_time = datetime.now()
             print_details(m)
     elif result == unsat:
         lo_unsat = guess_cps
@@ -212,7 +221,7 @@ while min(lo_unsat, lo_unknown, p.cps_hi) - max(hi_sat, p.cps_lo) > p.cps_res:
 
 print("---------------------------------------")
 print(f"Sat: {hi_sat:.4f}, Unknown: {lo_unknown:.4f}, Unsat: {lo_unsat:.4f}")
-print(f"Total Time: {total_time}")
+print(f"Total Time: {datetime.now() - setupTime}")
 print("---------------------------------------")
 
 sys.stdout = f

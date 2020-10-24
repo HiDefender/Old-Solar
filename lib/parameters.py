@@ -14,20 +14,25 @@ class Parameters:
     #   is less than the resolution.
     cps_hi: float = 5.0
     cps_lo: float = 0.0
-    cps_res: float = 0.00000000001
+    cps_res: float = 1.0 #0.00000000001
     # -Easy SAT and clearly UNSAT problems are solved quickly.
     # -The solver learns more from solving SAT problems.
     #   Therefore search begins at cps_lo and increases each time by initial_lo_to_hi_ratio_step_up.
     #   Once the first UNSAT or UNKNOWN is encountered, after_failure_step_up_ratio is used instead.
     #   Set initial_lo_to_hi_ratio_step_up to zero to enter after_failure_step_up_ratio immediately.
-    initial_lo_to_hi_ratio_step_up: float = 1/10000
+    initial_lo_to_hi_ratio_step_up: float = 1/20 #1/10000
     #   After first failure increase guess more conservatively.
-    after_failure_step_up_ratio: float = 1/1000
+    after_failure_step_up_ratio: float = 1/10 #1/1000
     # The number of miliseconds the solver should spend on any single iteration.
     #   Higher is better and slower.
-    timeout: timedelta = timedelta(minutes=300)
-    # Only print if solver runs longer than:
-    min_print_time: timedelta = timedelta(minutes=5)
+    timeout: timedelta = timedelta(seconds=60)
+    # After a solver query is SAT, UNSAT, or UNKNOWN only print update to screen
+    #   if at least update_time has passed since last printed update.
+    #   First solver query always prints.
+    update_time: timedelta = timedelta(seconds=30)
+    # After a solver query is SAT only print update to file if at least sat_time
+    #   has passed since last sat printed to file.
+    sat_time: timedelta = timedelta(seconds=30)
     # Ignores all n_grams (except single alphabet characters) with a frequency below the cutoff.
     #   Lower is better and slower.
     cutoff: int = 50000000
@@ -57,7 +62,8 @@ class Parameters:
         print(f'Hi: {p.cps_hi}, Lo: {p.cps_lo}, Resolution: {p.cps_res}')
         print(f'Timeout: {p.timeout}, Cutoff: {p.cutoff}, Freq_prune: {p.freq_prune:.2f}')
         print(f"Stride discount: {p.stride}, Stutter discount: {p.stutter}")
-        print(f"If not last SAT solution print to STDOUT and file only if timer exceeds: {p.min_print_time}")
+        # min_print_time replaced with update_time and sat_time. No need to print those out.
+        # print(f"If not last SAT solution print to STDOUT and file only if timer exceeds: {p.min_print_time}")
         print("---------------------------------------")
         return p
 

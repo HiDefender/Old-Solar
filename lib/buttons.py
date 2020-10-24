@@ -162,26 +162,27 @@ def cost_mcc(s, n, b):
             assert(2 + 2 == 5) # Model isn't programmed to handle 6_grams or larger.
 
         s.add( b.cost[i] == \
-            If(And(Extract(2, 2, b.G[i]) == 1, Extract(1, 1, b.G[i]) == 1),  1.875, #  000 000 000 110
-            If(And(Extract(4, 4, b.G[i]) == 1, Extract(3, 3, b.G[i]) == 1),  1.66666666666667, #  000 000 011 000
-            If(And(Extract(7, 7, b.G[i]) == 1, Extract(6, 6, b.G[i]) == 1),  1.62162162162162, #  000 011 000 000
-            If(And(Extract(5, 5, b.G[i]) == 1, Extract(4, 4, b.G[i]) == 1),  1.46341463414634, #  000 000 110 000
-            If(And(Extract(8, 8, b.G[i]) == 1, Extract(7, 7, b.G[i]) == 1),  1.42857142857143, #  000 110 000 000
-            If(And(Extract(1, 1, b.G[i]) == 1, Extract(0, 0, b.G[i]) == 1, ),  1.36363636363636, #  000 000 000 011
-            If(And(Extract(11, 11, b.G[i]) == 1, Extract(10, 10, b.G[i]) == 1),  1.27659574468085, #  110 000 000 000
-            If(And(Extract(10, 10, b.G[i]) == 1, Extract(9, 9, b.G[i]) == 1),  1.15384615384615, #  011 000 000 000
-            If(Extract(9, 9, b.G[i]) == 1,  0.909090909090909, #  001 000 000 000
-            If(Extract(11, 11, b.G[i]) == 1,  0.8, #  100 000 000 000
-            If(Extract(2, 2, b.G[i]) == 1,  0.789473684210526, #  000 000 000 100
-            If(Extract(0, 0, b.G[i]) == 1,  0.789473684210526, #  000 000 000 001
-            If(Extract(6, 6, b.G[i]) == 1,  0.779220779220779, #  000 001 000 000
-            If(Extract(3, 3, b.G[i]) == 1,  0.769230769230769, #  000 000 001 000
-            If(Extract(8, 8, b.G[i]) == 1,  0.75, #  000 100 000 000
-            If(Extract(5, 5, b.G[i]) == 1,  0.731707317073171, #  000 000 100 000
-            If(Extract(1, 1, b.G[i]) == 1,  0.621761658031088, #  000 000 000 010
-            If(Extract(4, 4, b.G[i]) == 1,  0.542986425339366, #  000 000 010 000
-            If(Extract(7, 7, b.G[i]) == 1,  0.49792531120332, #  000 010 000 000
-            If(Extract(10, 10, b.G[i]) == 1,  0.47244094488189, #  010 000 000 000
+            If(And(Extract(4, 4, b.G[i]) == 1, Extract(3, 3, b.G[i]) == 1),  1.53846153846154 / len(n.grams[i]), #  000 000 011 000
+            If(And(Extract(5, 5, b.G[i]) == 1, Extract(4, 4, b.G[i]) == 1),  1.53846153846154 / len(n.grams[i]), #  000 000 110 000
+            If(And(Extract(1, 1, b.G[i]) == 1, Extract(0, 0, b.G[i]) == 1),  1.53846153846154 / len(n.grams[i]), #  000 000 000 011
+            If(And(Extract(2, 2, b.G[i]) == 1, Extract(1, 1, b.G[i]) == 1),  1.53846153846154 / len(n.grams[i]), #  000 000 000 110
+            If(And(Extract(11, 11, b.G[i]) == 1, Extract(10, 10, b.G[i]) == 1),  1.27659574468085 / len(n.grams[i]), #  110 000 000 000
+            If(And(Extract(8, 8, b.G[i]) == 1, Extract(7, 7, b.G[i]) == 1),  1.2 / len(n.grams[i]), #  000 110 000 000
+            If(And(Extract(7, 7, b.G[i]) == 1, Extract(6, 6, b.G[i]) == 1),  1.11111111111111 / len(n.grams[i]), #  000 011 000 000
+            If(And(Extract(10, 10, b.G[i]) == 1, Extract(9, 9, b.G[i]) == 1),  1.09090909090909 / len(n.grams[i]), #  011 000 000 000
+            If(Extract(2, 2, b.G[i]) == 1,  0.689655172413793 / len(n.grams[i]), #  000 000 000 100
+            If(Extract(5, 5, b.G[i]) == 1,  0.674157303370786 / len(n.grams[i]), #  000 000 100 000
+            If(Extract(0, 0, b.G[i]) == 1,  0.625 / len(n.grams[i]), #  000 000 000 001
+            If(Extract(3, 3, b.G[i]) == 1,  0.594059405940594 / len(n.grams[i]), #  000 000 001 000
+            If(Extract(9, 9, b.G[i]) == 1,  0.560747663551402 / len(n.grams[i]), #  001 000 000 000
+            If(Extract(1, 1, b.G[i]) == 1,  0.538116591928251 / len(n.grams[i]), #  000 000 000 010
+            If(Extract(11, 11, b.G[i]) == 1,  0.530973451327434 / len(n.grams[i]), #  100 000 000 000
+            If(Extract(8, 8, b.G[i]) == 1,  0.530973451327434 / len(n.grams[i]), #  000 100 000 000
+            If(Extract(6, 6, b.G[i]) == 1,  0.521739130434783 / len(n.grams[i]), #  000 001 000 000
+            If(Extract(7, 7, b.G[i]) == 1,  0.470588235294118 / len(n.grams[i]), #  000 010 000 000
+            If(Extract(4, 4, b.G[i]) == 1,  0.465116279069767 / len(n.grams[i]), #  000 000 010 000
+            If(Extract(10, 10, b.G[i]) == 1,  0.452830188679245 / len(n.grams[i]), #  010 000 000 000
+
             #  This can only be reached if the n-gram has a null assignment (is assigned no chord)
             #   We set it equal to null_n_gram_cost[i], null_n_gram_cost is just a placeholder to 
             #   prevent verbose code.
