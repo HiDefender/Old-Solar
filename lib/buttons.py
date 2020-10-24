@@ -145,7 +145,7 @@ def cost_mcc(s, n, b):
     # null_n_gram_cost = [ Real('nc%s' % i) for i in range(len(n.grams)) ]
     for i in range(len(n.grams)):
         if len(n.grams[i]) == 1:
-            null_assignment = 100
+            null_assignment = 100 # All 
         elif len(n.grams[i]) == 2:
             null_assignment = b.cost[n.index[n.grams[i][0]]] + b.cost[n.index[n.grams[i][1]]]
         elif len(n.grams[i]) == 3:

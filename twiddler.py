@@ -71,6 +71,7 @@ for i in range(n.bi_gram_size):
     stride_total_chars += b.bi_count[i] * 2
 total_count = RealVal(mcc_total_chars * (1 - p.stride_wt) +
                       stride_total_chars * p.stride_wt)
+print(f"Bigram Stride Weight: {p.stride_wt}, MCC Weight: {(1 - p.stride_wt)}")
 print(f"Total count: {total_count}")
 chars_per_second = Real("cps")
 s.add(chars_per_second == total_count /
@@ -166,6 +167,7 @@ search_has_failed = False
 last_print_time = datetime.min
 last_sat_time = datetime.min
 solver_time = datetime.now()
+last_was_update = False
 m = None
 f = open("config.txt", "a")
 # See comments above in "Guide the Search" for understanding how this works.
@@ -193,10 +195,14 @@ while min(lo_unsat, lo_unknown, p.cps_hi) - max(hi_sat, p.cps_lo) > p.cps_res:
     result = s.check()
     guess_time = datetime.now() - solveTime
     if datetime.now() >= last_print_time + p.update_time:
+        if last_was_update:
+            print("") # Print newline
+            last_was_update = False
         last_print_time = datetime.now()
         print(f"{guess_cps:.9f} - {str(result):7} - {guess_time} - {datetime.now() - solver_time}")
     else:
         print(f".", flush=True, end="")
+        last_was_update = True
 
     sys.stdout = f
     if result == sat:
@@ -219,6 +225,8 @@ while min(lo_unsat, lo_unknown, p.cps_hi) - max(hi_sat, p.cps_lo) > p.cps_res:
 
     # s.pop() # Restore state (i.e. Remove guess constraint)
 
+if last_was_update:
+    print("") # Print newline
 print("---------------------------------------")
 print(f"Sat: {hi_sat:.4f}, Unknown: {lo_unknown:.4f}, Unsat: {lo_unsat:.4f}")
 print(f"Total Time: {datetime.now() - setupTime}")

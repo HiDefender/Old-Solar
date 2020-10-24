@@ -12,30 +12,30 @@ class Parameters:
     #   range for the highest CPS it can find. It will quit once the difference between the
     #   highest satisfiable (sat) solution and the lowest unsatisfiable/timeout (unsat/unknown)
     #   is less than the resolution.
-    cps_hi: float = 5.0
+    cps_hi: float = 7.0
     cps_lo: float = 0.0
-    cps_res: float = 1.0 #0.00000000001
+    cps_res: float = 0.00000000001
     # -Easy SAT and clearly UNSAT problems are solved quickly.
     # -The solver learns more from solving SAT problems.
     #   Therefore search begins at cps_lo and increases each time by initial_lo_to_hi_ratio_step_up.
     #   Once the first UNSAT or UNKNOWN is encountered, after_failure_step_up_ratio is used instead.
     #   Set initial_lo_to_hi_ratio_step_up to zero to enter after_failure_step_up_ratio immediately.
-    initial_lo_to_hi_ratio_step_up: float = 1/20 #1/10000
+    initial_lo_to_hi_ratio_step_up: float = 1/10000
     #   After first failure increase guess more conservatively.
-    after_failure_step_up_ratio: float = 1/10 #1/1000
+    after_failure_step_up_ratio: float = 1/1000
     # The number of miliseconds the solver should spend on any single iteration.
     #   Higher is better and slower.
-    timeout: timedelta = timedelta(seconds=60)
+    timeout: timedelta = timedelta(hours=24)
     # After a solver query is SAT, UNSAT, or UNKNOWN only print update to screen
     #   if at least update_time has passed since last printed update.
     #   First solver query always prints.
-    update_time: timedelta = timedelta(seconds=30)
+    update_time: timedelta = timedelta(minutes=5)
     # After a solver query is SAT only print update to file if at least sat_time
     #   has passed since last sat printed to file.
-    sat_time: timedelta = timedelta(seconds=30)
+    sat_time: timedelta = timedelta(minutes=5)
     # Ignores all n_grams (except single alphabet characters) with a frequency below the cutoff.
     #   Lower is better and slower.
-    cutoff: int = 50000000
+    cutoff: int = 3545482
     # Affects how aggressively the frequency of k_grams is reduced when they are sub-strings of
     #   (k + 1)_grams. Set to 0 to turn off.
     freq_prune: float = 2/3
@@ -46,13 +46,15 @@ class Parameters:
                         ["english_trigrams.txt",
                         "english_quadgrams.txt",
                         "english_quintgrams.txt"])
-    #Striding is assumed to be faster than normal, this is the discount given to strides.
+    # Striding is assumed to be faster than normal, this is the discount given to strides.
     #   https://github.com/lancegatlin/typemax/blob/master/basic_layout_design.md#stride
     stride: float = 0.5
-    #Stuttering is assumed to be faster than normal, this is the discount given to stutters.
+    # Stuttering is assumed to be faster than normal, this is the discount given to stutters.
     #   https://github.com/lancegatlin/typemax/blob/master/basic_layout_design.md#stutter
     stutter: float = 0.75
-    stride_wt: float = 0.9
+    # Solver will try to maximize both single char striding and multi-char chords.
+    #   Striding is given the weight of stride_wt and mcc the weight of (1 - stride_wt)
+    stride_wt: float = 0.1
 
 
     def setup():
