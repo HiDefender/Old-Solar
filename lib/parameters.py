@@ -25,14 +25,14 @@ class Parameters:
     after_failure_step_up_ratio: float = 1/1000
     # The number of miliseconds the solver should spend on any single iteration.
     #   Higher is better and slower.
-    timeout: timedelta = timedelta(hours=24)
+    timeout: timedelta = timedelta(months=1)
     # After a solver query is SAT, UNSAT, or UNKNOWN only print update to screen
     #   if at least update_time has passed since last printed update.
     #   First solver query always prints.
-    update_time: timedelta = timedelta(minutes=5)
+    update_time: timedelta = timedelta(minutes=30)
     # After a solver query is SAT only print update to file if at least sat_time
     #   has passed since last sat printed to file.
-    sat_time: timedelta = timedelta(minutes=5)
+    sat_time: timedelta = timedelta(hours=5)
     # Ignores all n_grams (except single alphabet characters) with a frequency below the cutoff.
     #   Lower is better and slower.
     cutoff: int = 3545482
