@@ -89,10 +89,10 @@ class NGrams:
         t1, t2 = load_files(p.bigrams_file, p.cutoff)
         n_grams.extend(t1)
         count.extend(t2)
-        for file in p.other_freq_files:
-            t1, t2 = load_files(file, p.cutoff)
-            n_grams.extend(t1)
-            count.extend(t2)
+        # for file in p.other_freq_files:
+        #     t1, t2 = load_files(file, p.cutoff)
+        #     n_grams.extend(t1)
+        #     count.extend(t2)
         assert len(count) == len(n_grams)
 
         index = prune_excess_counts(p, n_grams, count, alphabet_size)
