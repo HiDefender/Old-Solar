@@ -86,14 +86,17 @@ class NGrams:
     def load_n_grams(p):
         n_grams, count = load_files(p.alphabet_file, 0)
         alphabet_size = len(n_grams)
-        t1, t2 = load_files(p.bigrams_file, p.cutoff)
-        n_grams.extend(t1)
-        count.extend(t2)
+        
+#************ MCC not used in stride version****************
+        # t1, t2 = load_files(p.bigrams_file, p.cutoff)
+        # n_grams.extend(t1)
+        # count.extend(t2)
         # for file in p.other_freq_files:
         #     t1, t2 = load_files(file, p.cutoff)
         #     n_grams.extend(t1)
         #     count.extend(t2)
         assert len(count) == len(n_grams)
 
-        index = prune_excess_counts(p, n_grams, count, alphabet_size)
+#************ MCC not used in stride version****************
+        # index = prune_excess_counts(p, n_grams, count, alphabet_size)
         return NGrams(alphabet_size, grams=n_grams, count=count, index=index)

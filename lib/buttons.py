@@ -75,14 +75,15 @@ def problem_def(s, n):
 
     cost = [ Real('rc%s' % i) for i in range(len(n.grams)) ]
 
-    # cumulative_cost is cost times frequency.
-    cumulative_cost = [ Real('cc%s' % i) for i in range(len(n.grams)) ]
-    print(f"cum_cost_len: {len(cumulative_cost)} n_gram_len: {len(n.grams)}")
-    # This is a round about way of summing up the total cost of the
-    #   whole problem. Keep in mind that we are limited to 1st-order logic
-    s.add(cumulative_cost[0] == cost[0] * n.count[0])
-    s.add( [ cumulative_cost[i] == cumulative_cost[i-1] + cost[i] * n.count[i] \
-                for i in range(1, len(n.grams)) ] )
+#************ Cumulative Cost not used in stride version****************
+    # # cumulative_cost is cost times frequency.
+    # cumulative_cost = [ Real('cc%s' % i) for i in range(len(n.grams)) ]
+    # print(f"cum_cost_len: {len(cumulative_cost)} n_gram_len: {len(n.grams)}")
+    # # This is a round about way of summing up the total cost of the
+    # #   whole problem. Keep in mind that we are limited to 1st-order logic
+    # s.add(cumulative_cost[0] == cost[0] * n.count[0])
+    # s.add( [ cumulative_cost[i] == cumulative_cost[i-1] + cost[i] * n.count[i] \
+    #             for i in range(1, len(n.grams)) ] )
 
     return Buttons(G=G, F=F, cost=cost, cumulative_cost=cumulative_cost)
 
@@ -145,7 +146,7 @@ def cost_mcc(s, n, b):
     # null_n_gram_cost = [ Real('nc%s' % i) for i in range(len(n.grams)) ]
     for i in range(len(n.grams)):
         if len(n.grams[i]) == 1:
-            null_assignment = 100 # All 
+            null_assignment = 100000 # Single characters cannot have a null assignment.
         elif len(n.grams[i]) == 2:
             null_assignment = b.cost[n.index[n.grams[i][0]]] + b.cost[n.index[n.grams[i][1]]]
         elif len(n.grams[i]) == 3:

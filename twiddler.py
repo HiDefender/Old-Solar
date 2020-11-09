@@ -32,8 +32,8 @@ set_option(max_args=10000000, max_lines=1000000, max_depth=10000000, max_visited
 p = lib.Parameters.setup()
 n = lib.NGrams.load_n_grams(p)
 b = lib.problem_def(s, n)
-# lib.ghost_combos(s, n, b)
-lib.mcc_from_scc(s, n, b)
+lib.ghost_combos(s, n, b)
+# lib.mcc_from_scc(s, n, b)
 lib.cost_mcc(s, n, b)
 lib.cost_scc(p, s, n, b)
 
@@ -63,20 +63,22 @@ s.add(Extract(11, 11, b.F[n.index['D']]) == 0) #Ends 9.98% of words
 # We can use this to calculate average characters per second:
 # 1 / (cumulative_cost[len(n.grams)-1] / total_count) this simplifies to:
 # total_count / cumulative_cost[len(n.grams)-1]
-mcc_total_chars = 0
-for i in range(len(n.count)):
-    mcc_total_chars += n.count[i] * len(n.grams[i])
+# mcc_total_chars = 0
+# for i in range(len(n.count)):
+#     mcc_total_chars += n.count[i] * len(n.grams[i])
 stride_total_chars = 0
 for i in range(n.bi_gram_size):
     stride_total_chars += b.bi_count[i] * 2
-total_count = RealVal(mcc_total_chars * (1 - p.stride_wt) +
-                      stride_total_chars * p.stride_wt)
-print(f"Bigram Stride Weight: {p.stride_wt}, MCC Weight: {(1 - p.stride_wt)}")
+# total_count = RealVal(mcc_total_chars * (1 - p.stride_wt) +
+#                       stride_total_chars * p.stride_wt)
+total_count = RealVal(stride_total_chars)
+# print(f"Bigram Stride Weight: {p.stride_wt}, MCC Weight: {(1 - p.stride_wt)}")
 print(f"Total count: {total_count}")
 chars_per_second = Real("cps")
-s.add(chars_per_second == total_count /
-    (b.cumulative_cost[len(n.grams)-1] * (1 - p.stride_wt) +
-    b.cum_stride_cost[n.bi_gram_size-1] * p.stride_wt))
+# s.add(chars_per_second == total_count /
+#     (b.cumulative_cost[len(n.grams)-1] * (1 - p.stride_wt) +
+#     b.cum_stride_cost[n.bi_gram_size-1] * p.stride_wt))
+s.add(chars_per_second == total_count / b.cum_stride_cost[n.bi_gram_size-1])
 
 
 # ******************************************************
