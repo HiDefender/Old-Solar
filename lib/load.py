@@ -67,10 +67,11 @@ def prune_excess_counts(p, n_grams, count, alphabet_size):
     assert(total_count == total_count_assertion_check)
     assert len(count) == len(n_grams)
 
-    for i in range(len(n_grams)):
-        if count[i] <= 0:
-            print("freq_prune is set too high!")
-            sys.exit()
+# Not used in stride version
+    # for i in range(len(n_grams)):
+    #     if count[i] <= 0:
+    #         print("freq_prune is set too high!")
+    #         sys.exit()
     print(f"Removed {total_removal * 100 / total_count:.2f}% of frequency count as excess.")
 
     return index
@@ -87,16 +88,14 @@ class NGrams:
         n_grams, count = load_files(p.alphabet_file, 0)
         alphabet_size = len(n_grams)
         
-#************ MCC not used in stride version****************
-        # t1, t2 = load_files(p.bigrams_file, p.cutoff)
-        # n_grams.extend(t1)
-        # count.extend(t2)
-        # for file in p.other_freq_files:
-        #     t1, t2 = load_files(file, p.cutoff)
-        #     n_grams.extend(t1)
-        #     count.extend(t2)
+        t1, t2 = load_files(p.bigrams_file, p.cutoff)
+        n_grams.extend(t1)
+        count.extend(t2)
+        for file in p.other_freq_files:
+            t1, t2 = load_files(file, p.cutoff)
+            n_grams.extend(t1)
+            count.extend(t2)
         assert len(count) == len(n_grams)
 
-#************ MCC not used in stride version****************
-        # index = prune_excess_counts(p, n_grams, count, alphabet_size)
+        index = prune_excess_counts(p, n_grams, count, alphabet_size)
         return NGrams(alphabet_size, grams=n_grams, count=count, index=index)

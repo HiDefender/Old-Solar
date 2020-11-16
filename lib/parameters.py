@@ -35,7 +35,7 @@ class Parameters:
     sat_time: timedelta = timedelta(minutes=5)
     # Ignores all n_grams (except single alphabet characters) with a frequency below the cutoff.
     #   Lower is better and slower.
-    cutoff: int = 0
+    cutoff: int = 999999999999
     # Affects how aggressively the frequency of k_grams is reduced when they are sub-strings of
     #   (k + 1)_grams. Set to 0 to turn off.
     freq_prune: float = 2/3

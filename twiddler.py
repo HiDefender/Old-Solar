@@ -189,10 +189,11 @@ while min(lo_unsat, lo_unknown, p.cps_hi) - max(hi_sat, p.cps_lo) > p.cps_res:
     # For some reason the solver cannot handle this constraint:
     #   s.add(chars_per_second >= cps)
     #   So we calclate max cumulative cost and set the limit that way.
-    guess_max_cumulative_cost = total_count / guess_cps
+    guess_max_cost = total_count / guess_cps
     s.push() # Create new state
-    s.add(b.cumulative_cost[len(n.grams)-1] <= guess_max_cumulative_cost)
-    
+    s.add(b.cum_stride_cost[n.bi_gram_size-1] <= guess_max_cost)
+    # s.add((b.cumulative_cost[len(n.grams)-1] * (1 - p.stride_wt) +
+    #        b.cum_stride_cost[n.bi_gram_size-1] * p.stride_wt) <= guess_max_cost)
     
     result = s.check()
     guess_time = datetime.now() - solveTime

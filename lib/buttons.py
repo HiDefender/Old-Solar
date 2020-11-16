@@ -9,7 +9,7 @@ class Buttons:
     cost: list = field(default_factory=lambda: [])
     stride_cost: list = field(default_factory=lambda: [])
     cum_stride_cost: list = field(default_factory=lambda: [])
-    cumulative_cost: list = field(default_factory=lambda: [])
+    # cumulative_cost: list = field(default_factory=lambda: [])
     bi_count: list = field(default_factory=lambda: [])
 
 # ***************************************
@@ -85,7 +85,8 @@ def problem_def(s, n):
     # s.add( [ cumulative_cost[i] == cumulative_cost[i-1] + cost[i] * n.count[i] \
     #             for i in range(1, len(n.grams)) ] )
 
-    return Buttons(G=G, F=F, cost=cost, cumulative_cost=cumulative_cost)
+    return Buttons(G=G, F=F, cost=cost)
+    # return Buttons(G=G, F=F, cost=cost, cumulative_cost=cumulative_cost)
 
 def cost_scc(p, s, n, b):
 
