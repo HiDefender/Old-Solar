@@ -85,7 +85,7 @@ s.add(chars_per_second == total_count / b.cum_stride_cost[n.bi_gram_size-1])
 # Print out quick view of what configuration looks like.
 # ******************************************************
 
-def print_config(d):
+def print_config(d, file = sys.stdout):
     # The default buttons and double row buttons
     f = [
         2048, 3072, 1024, 1536, 512,
@@ -104,26 +104,26 @@ def print_config(d):
         if x not in d:
             d[x] = ""
     # print(f[0].sort())
-    print(f'\n   Left       Middle       Right')
-    print(f' ________________________________')
-    print(f'|              Space      BckSpc | <-- Mouseclick buttons')
-    print(f'|--------------------------------|')
-    print(f'| [{d[f[0]]:4}] {d[f[1]]:4} [{d[f[2]]:4}] {d[f[3]]:4} [{d[f[4]]:4}] |')
-    print(f'|                                |')
-    print(f'|  {d[f[5]]:4}  {d[f[6]]:4}  {d[f[7]]:4}  {d[f[8]]:4}  {d[f[9]]:4}  |')
-    print(f'|                                |')
-    print(f'| [{d[f[10]]:4}] {d[f[11]]:4} [{d[f[12]]:4}] {d[f[13]]:4} [{d[f[14]]:4}] |')
-    print(f'|                                |')
-    print(f'|  {d[f[15]]:4}  {d[f[16]]:4}  {d[f[17]]:4}  {d[f[18]]:4}  {d[f[19]]:4}  |')
-    print(f'|                                |')
-    print(f'| [{d[f[20]]:4}] {d[f[21]]:4} [{d[f[22]]:4}] {d[f[23]]:4} [{d[f[24]]:4}] |')
-    print(f'|                                |')
-    print(f'|  {d[f[25]]:4}  {d[f[26]]:4}  {d[f[27]]:4}  {d[f[28]]:4}  {d[f[29]]:4}  |')
-    print(f'|                                |')
-    print(f'| [{d[f[30]]:4}] {d[f[31]]:4} [{d[f[32]]:4}] {d[f[33]]:4} [{d[f[34]]:4}] |')
-    print(f'|________________________________|')
+    file.write(f'\n   Left       Middle       Right')
+    file.write(f' ________________________________')
+    file.write(f'|              Space      BckSpc | <-- Mouseclick buttons')
+    file.write(f'|--------------------------------|')
+    file.write(f'| [{d[f[0]]:4}] {d[f[1]]:4} [{d[f[2]]:4}] {d[f[3]]:4} [{d[f[4]]:4}] |')
+    file.write(f'|                                |')
+    file.write(f'|  {d[f[5]]:4}  {d[f[6]]:4}  {d[f[7]]:4}  {d[f[8]]:4}  {d[f[9]]:4}  |')
+    file.write(f'|                                |')
+    file.write(f'| [{d[f[10]]:4}] {d[f[11]]:4} [{d[f[12]]:4}] {d[f[13]]:4} [{d[f[14]]:4}] |')
+    file.write(f'|                                |')
+    file.write(f'|  {d[f[15]]:4}  {d[f[16]]:4}  {d[f[17]]:4}  {d[f[18]]:4}  {d[f[19]]:4}  |')
+    file.write(f'|                                |')
+    file.write(f'| [{d[f[20]]:4}] {d[f[21]]:4} [{d[f[22]]:4}] {d[f[23]]:4} [{d[f[24]]:4}] |')
+    file.write(f'|                                |')
+    file.write(f'|  {d[f[25]]:4}  {d[f[26]]:4}  {d[f[27]]:4}  {d[f[28]]:4}  {d[f[29]]:4}  |')
+    file.write(f'|                                |')
+    file.write(f'| [{d[f[30]]:4}] {d[f[31]]:4} [{d[f[32]]:4}] {d[f[33]]:4} [{d[f[34]]:4}] |')
+    file.write(f'|________________________________|')
 
-def print_details(m):
+def print_details(m, file = sys.stdout):
     # We generate a dictionary where the chords are the keys and n_grams the values.
     num_2 = 0
     num_3 = 0
@@ -145,10 +145,10 @@ def print_details(m):
             elif len(n.grams[i]) == 5:
                 num_5 += 1
             # elif len(n.grams[i]) == 1:
-            print("i: " + str(i) + ", m[G[i]]: " + str(m[b.G[i]]) + ", n_gram: " + n.grams[i])
-    print(f'Chorded-2_grams: {num_2}, 3_grams: {num_3}, 4_grams: {num_4}, 5_grams: {num_5}')
+            file.write("i: " + str(i) + ", m[G[i]]: " + str(m[b.G[i]]) + ", n_gram: " + n.grams[i])
+    file.write(f'Chorded-2_grams: {num_2}, 3_grams: {num_3}, 4_grams: {num_4}, 5_grams: {num_5}')
     
-    print_config(press_lookup)
+    print_config(press_lookup, file = file)
 
 # **************************************************
 # Sit back relax and let the SMT solver do the work.
@@ -171,7 +171,8 @@ last_sat_time = datetime.min
 solver_time = datetime.now()
 last_was_update = False
 m = None
-f = open("config.txt", "a")
+config_file = open("config.txt", "a")
+last_result = unknown
 # See comments above in "Guide the Search" for understanding how this works.
 while min(lo_unsat, lo_unknown, p.cps_hi) - max(hi_sat, p.cps_lo) > p.cps_res:
     # print(f"lo_unsat: {lo_unsat}, lo_unknown: {lo_unknown}, p.cps_hi: {p.cps_hi}, hi_sat: {hi_sat}, p.cps_lo: {p.cps_lo}, p.cps_res: {p.cps_res}")
@@ -197,7 +198,7 @@ while min(lo_unsat, lo_unknown, p.cps_hi) - max(hi_sat, p.cps_lo) > p.cps_res:
     
     result = s.check()
     guess_time = datetime.now() - solveTime
-    if datetime.now() >= last_print_time + p.update_time:
+    if datetime.now() >= last_print_time + p.update_time or last_result != result:
         if last_was_update:
             print("") # Print newline
             last_was_update = False
@@ -206,14 +207,14 @@ while min(lo_unsat, lo_unknown, p.cps_hi) - max(hi_sat, p.cps_lo) > p.cps_res:
     else:
         print(f".", flush=True, end="")
         last_was_update = True
+    last_result = result
 
-    sys.stdout = f
     if result == sat:
         hi_sat = guess_cps
         m = s.model()
         if datetime.now() >= last_sat_time + p.sat_time:
             last_sat_time = datetime.now()
-            print_details(m)
+            print_details(m, file = config_file)
     elif result == unsat:
         lo_unsat = guess_cps
         search_has_failed = True
@@ -224,7 +225,6 @@ while min(lo_unsat, lo_unknown, p.cps_hi) - max(hi_sat, p.cps_lo) > p.cps_res:
         search_has_failed = True
         s.pop() # Restore state (i.e. Remove guess constraint)
                 # Only remove guess constraint when it can't be attained, not when sat.
-    sys.stdout = sys.__stdout__
 
     # s.pop() # Restore state (i.e. Remove guess constraint)
 
@@ -235,10 +235,8 @@ print(f"Sat: {hi_sat:.4f}, Unknown: {lo_unknown:.4f}, Unsat: {lo_unsat:.4f}")
 print(f"Total Time: {datetime.now() - setupTime}")
 print("---------------------------------------")
 
-sys.stdout = f
-print_details(m)
-sys.stdout = sys.__stdout__
-f.close()
+print_details(m, file = config_file)
+config_file.close()
 
 print_details(m)
 # ******************************************************

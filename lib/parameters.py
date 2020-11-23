@@ -21,21 +21,27 @@ class Parameters:
     #   Once the first UNSAT or UNKNOWN is encountered, after_failure_step_up_ratio is used instead.
     #   Set initial_lo_to_hi_ratio_step_up to zero to enter after_failure_step_up_ratio immediately.
     initial_lo_to_hi_ratio_step_up: float = 1/10000
+
     #   After first failure increase guess more conservatively.
     after_failure_step_up_ratio: float = 1/1000
+    
     # The number of miliseconds the solver should spend on any single iteration.
     #   Higher is better and slower.
     timeout: timedelta = timedelta(days=30)
+
     # After a solver query is SAT, UNSAT, or UNKNOWN only print update to screen
     #   if at least update_time has passed since last printed update.
     #   First solver query always prints.
     update_time: timedelta = timedelta(minutes=30)
-    # After a solver query is SAT only print update to file if at least sat_time
-    #   has passed since last sat printed to file.
+
+    # After a solver query is SAT only print update to config_file if at least sat_time
+    #   has passed since last sat printed to config_file.
     sat_time: timedelta = timedelta(minutes=5)
+
     # Ignores all n_grams (except single alphabet characters) with a frequency below the cutoff.
     #   Lower is better and slower.
     cutoff: int = 999999999999
+
     # Affects how aggressively the frequency of k_grams is reduced when they are sub-strings of
     #   (k + 1)_grams. Set to 0 to turn off.
     freq_prune: float = 2/3
