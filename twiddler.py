@@ -104,24 +104,24 @@ def print_config(d, file = sys.stdout):
         if x not in d:
             d[x] = ""
     # print(f[0].sort())
-    file.write(f'\n   Left       Middle       Right')
-    file.write(f' ________________________________')
-    file.write(f'|              Space      BckSpc | <-- Mouseclick buttons')
-    file.write(f'|--------------------------------|')
-    file.write(f'| [{d[f[0]]:4}] {d[f[1]]:4} [{d[f[2]]:4}] {d[f[3]]:4} [{d[f[4]]:4}] |')
-    file.write(f'|                                |')
-    file.write(f'|  {d[f[5]]:4}  {d[f[6]]:4}  {d[f[7]]:4}  {d[f[8]]:4}  {d[f[9]]:4}  |')
-    file.write(f'|                                |')
-    file.write(f'| [{d[f[10]]:4}] {d[f[11]]:4} [{d[f[12]]:4}] {d[f[13]]:4} [{d[f[14]]:4}] |')
-    file.write(f'|                                |')
-    file.write(f'|  {d[f[15]]:4}  {d[f[16]]:4}  {d[f[17]]:4}  {d[f[18]]:4}  {d[f[19]]:4}  |')
-    file.write(f'|                                |')
-    file.write(f'| [{d[f[20]]:4}] {d[f[21]]:4} [{d[f[22]]:4}] {d[f[23]]:4} [{d[f[24]]:4}] |')
-    file.write(f'|                                |')
-    file.write(f'|  {d[f[25]]:4}  {d[f[26]]:4}  {d[f[27]]:4}  {d[f[28]]:4}  {d[f[29]]:4}  |')
-    file.write(f'|                                |')
-    file.write(f'| [{d[f[30]]:4}] {d[f[31]]:4} [{d[f[32]]:4}] {d[f[33]]:4} [{d[f[34]]:4}] |')
-    file.write(f'|________________________________|')
+    file.write(f'\n   Left       Middle       Right\n')
+    file.write(f' ________________________________\n')
+    file.write(f'|              Space      BckSpc | <-- Mouseclick buttons\n')
+    file.write(f'|--------------------------------|\n')
+    file.write(f'| [{d[f[0]]:4}] {d[f[1]]:4} [{d[f[2]]:4}] {d[f[3]]:4} [{d[f[4]]:4}] |\n')
+    file.write(f'|                                |\n')
+    file.write(f'|  {d[f[5]]:4}  {d[f[6]]:4}  {d[f[7]]:4}  {d[f[8]]:4}  {d[f[9]]:4}  |\n')
+    file.write(f'|                                |\n')
+    file.write(f'| [{d[f[10]]:4}] {d[f[11]]:4} [{d[f[12]]:4}] {d[f[13]]:4} [{d[f[14]]:4}] |\n')
+    file.write(f'|                                |\n')
+    file.write(f'|  {d[f[15]]:4}  {d[f[16]]:4}  {d[f[17]]:4}  {d[f[18]]:4}  {d[f[19]]:4}  |\n')
+    file.write(f'|                                |\n')
+    file.write(f'| [{d[f[20]]:4}] {d[f[21]]:4} [{d[f[22]]:4}] {d[f[23]]:4} [{d[f[24]]:4}] |\n')
+    file.write(f'|                                |\n')
+    file.write(f'|  {d[f[25]]:4}  {d[f[26]]:4}  {d[f[27]]:4}  {d[f[28]]:4}  {d[f[29]]:4}  |\n')
+    file.write(f'|                                |\n')
+    file.write(f'| [{d[f[30]]:4}] {d[f[31]]:4} [{d[f[32]]:4}] {d[f[33]]:4} [{d[f[34]]:4}] |\n')
+    file.write(f'|________________________________|\n')
 
 def print_details(m, file = sys.stdout):
     # We generate a dictionary where the chords are the keys and n_grams the values.
@@ -145,8 +145,8 @@ def print_details(m, file = sys.stdout):
             elif len(n.grams[i]) == 5:
                 num_5 += 1
             # elif len(n.grams[i]) == 1:
-            file.write("i: " + str(i) + ", m[G[i]]: " + str(m[b.G[i]]) + ", n_gram: " + n.grams[i])
-    file.write(f'Chorded-2_grams: {num_2}, 3_grams: {num_3}, 4_grams: {num_4}, 5_grams: {num_5}')
+            file.write("i: " + str(i) + ", m[G[i]]: " + str(m[b.G[i]]) + ", n_gram: " + n.grams[i] + "\n")
+    file.write(f'Chorded-2_grams: {num_2}, 3_grams: {num_3}, 4_grams: {num_4}, 5_grams: {num_5}\n')
     
     print_config(press_lookup, file = file)
 
