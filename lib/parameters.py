@@ -32,7 +32,7 @@ class Parameters:
     # After a solver query is SAT, UNSAT, or UNKNOWN only print update to screen
     #   if at least update_time has passed since last printed update.
     #   First solver query always prints.
-    update_time: timedelta = timedelta(minutes=30)
+    update_time: timedelta = timedelta(minutes=5)
 
     # After a solver query is SAT only print update to config_file if at least sat_time
     #   has passed since last sat printed to config_file.

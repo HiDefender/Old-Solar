@@ -36,6 +36,7 @@ lib.ghost_combos(s, n, b)
 # lib.mcc_from_scc(s, n, b)
 lib.cost_mcc(s, n, b)
 lib.cost_scc(p, s, n, b)
+lib.two_button_limit_for_alphabet(s, n, b)
 
 # These letters frequently end words, so we don't want them
 #   using the index finger, so they stride with SPACE.
@@ -171,7 +172,7 @@ last_sat_time = datetime.min
 solver_time = datetime.now()
 last_was_update = False
 m = None
-config_file = open("config.txt", "a")
+config_file = sys.stderr #open("config.txt", "a")
 last_result = unknown
 # See comments above in "Guide the Search" for understanding how this works.
 while min(lo_unsat, lo_unknown, p.cps_hi) - max(hi_sat, p.cps_lo) > p.cps_res:
