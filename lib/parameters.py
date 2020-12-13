@@ -62,6 +62,10 @@ class Parameters:
     #   Striding is given the weight of stride_wt and mcc the weight of (1 - stride_wt)
     stride_wt: float = 1.0
 
+    # The first n chars (in the order they appear in the alphabet file)
+    # Will be forced to use one button.
+    force_one_button_for_n_most_freq_chars: int = 11
+
 
     def setup():
         p = Parameters()
@@ -70,6 +74,7 @@ class Parameters:
         print(f'Hi: {p.cps_hi}, Lo: {p.cps_lo}, Resolution: {p.cps_res}')
         print(f'Timeout: {p.timeout}, Cutoff: {p.cutoff}, Freq_prune: {p.freq_prune:.2f}')
         print(f"Stride discount: {p.stride}, Stutter discount: {p.stutter}")
+        print(f"Forcing the {p.force_one_button_for_n_most_freq_chars} most frequent alphabet characters to use one button.")
         # min_print_time replaced with update_time and sat_time. No need to print those out.
         # print(f"If not last SAT solution print to STDOUT and file only if timer exceeds: {p.min_print_time}")
         print("---------------------------------------")

@@ -36,7 +36,7 @@ lib.ghost_combos(s, n, b)
 # lib.mcc_from_scc(s, n, b)
 lib.cost_mcc(s, n, b)
 lib.cost_scc(p, s, n, b)
-lib.two_button_limit_for_alphabet(s, n, b)
+lib.button_limit_for_alphabet(p, s, n, b)
 
 # These letters frequently end words, so we don't want them
 #   using the index finger, so they stride with SPACE.

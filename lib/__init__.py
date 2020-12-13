@@ -6,6 +6,6 @@ from .stride import stride_constraint
 from .buttons import problem_def
 from .buttons import cost_mcc
 from .buttons import cost_scc
-from .buttons import two_button_limit_for_alphabet
+from .buttons import button_limit_for_alphabet
 from .max_multi_char_chords import mcc_from_scc
 from .ghost import ghost_combos

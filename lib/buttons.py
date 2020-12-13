@@ -190,10 +190,29 @@ def cost_mcc(s, n, b):
             #   prevent verbose code.
             null_assignment)))))))))))))))))))))
 
-def two_button_limit_for_alphabet(s, n, b):
+def button_limit_for_alphabet(p, s, n, b):
+
+    assert p.force_one_button_for_n_most_freq_chars < 12
+    assert 12 < n.alphabet_size
+
+    for i in range(p.force_one_button_for_n_most_freq_chars):
+        s.add(Or(
+            And(Extract(0, 0, b.G[i]) == 1, Extract(1, 1, b.G[i]) == 0, Extract(2, 2, b.G[i]) == 0, Extract(3, 3, b.G[i]) == 0, Extract(4, 4, b.G[i]) == 0, Extract(5, 5, b.G[i]) == 0, Extract(6, 6, b.G[i]) == 0, Extract(7, 7, b.G[i]) == 0, Extract(8, 8, b.G[i]) == 0, Extract(9, 9, b.G[i]) == 0, Extract(10, 10, b.G[i]) == 0, Extract(11, 11, b.G[i]) == 0),
+            And(Extract(0, 0, b.G[i]) == 0, Extract(1, 1, b.G[i]) == 1, Extract(2, 2, b.G[i]) == 0, Extract(3, 3, b.G[i]) == 0, Extract(4, 4, b.G[i]) == 0, Extract(5, 5, b.G[i]) == 0, Extract(6, 6, b.G[i]) == 0, Extract(7, 7, b.G[i]) == 0, Extract(8, 8, b.G[i]) == 0, Extract(9, 9, b.G[i]) == 0, Extract(10, 10, b.G[i]) == 0, Extract(11, 11, b.G[i]) == 0),
+            And(Extract(0, 0, b.G[i]) == 0, Extract(1, 1, b.G[i]) == 0, Extract(2, 2, b.G[i]) == 1, Extract(3, 3, b.G[i]) == 0, Extract(4, 4, b.G[i]) == 0, Extract(5, 5, b.G[i]) == 0, Extract(6, 6, b.G[i]) == 0, Extract(7, 7, b.G[i]) == 0, Extract(8, 8, b.G[i]) == 0, Extract(9, 9, b.G[i]) == 0, Extract(10, 10, b.G[i]) == 0, Extract(11, 11, b.G[i]) == 0),
+            And(Extract(0, 0, b.G[i]) == 0, Extract(1, 1, b.G[i]) == 0, Extract(2, 2, b.G[i]) == 0, Extract(3, 3, b.G[i]) == 1, Extract(4, 4, b.G[i]) == 0, Extract(5, 5, b.G[i]) == 0, Extract(6, 6, b.G[i]) == 0, Extract(7, 7, b.G[i]) == 0, Extract(8, 8, b.G[i]) == 0, Extract(9, 9, b.G[i]) == 0, Extract(10, 10, b.G[i]) == 0, Extract(11, 11, b.G[i]) == 0),
+            And(Extract(0, 0, b.G[i]) == 0, Extract(1, 1, b.G[i]) == 0, Extract(2, 2, b.G[i]) == 0, Extract(3, 3, b.G[i]) == 0, Extract(4, 4, b.G[i]) == 1, Extract(5, 5, b.G[i]) == 0, Extract(6, 6, b.G[i]) == 0, Extract(7, 7, b.G[i]) == 0, Extract(8, 8, b.G[i]) == 0, Extract(9, 9, b.G[i]) == 0, Extract(10, 10, b.G[i]) == 0, Extract(11, 11, b.G[i]) == 0),
+            And(Extract(0, 0, b.G[i]) == 0, Extract(1, 1, b.G[i]) == 0, Extract(2, 2, b.G[i]) == 0, Extract(3, 3, b.G[i]) == 0, Extract(4, 4, b.G[i]) == 0, Extract(5, 5, b.G[i]) == 1, Extract(6, 6, b.G[i]) == 0, Extract(7, 7, b.G[i]) == 0, Extract(8, 8, b.G[i]) == 0, Extract(9, 9, b.G[i]) == 0, Extract(10, 10, b.G[i]) == 0, Extract(11, 11, b.G[i]) == 0),
+            And(Extract(0, 0, b.G[i]) == 0, Extract(1, 1, b.G[i]) == 0, Extract(2, 2, b.G[i]) == 0, Extract(3, 3, b.G[i]) == 0, Extract(4, 4, b.G[i]) == 0, Extract(5, 5, b.G[i]) == 0, Extract(6, 6, b.G[i]) == 1, Extract(7, 7, b.G[i]) == 0, Extract(8, 8, b.G[i]) == 0, Extract(9, 9, b.G[i]) == 0, Extract(10, 10, b.G[i]) == 0, Extract(11, 11, b.G[i]) == 0),
+            And(Extract(0, 0, b.G[i]) == 0, Extract(1, 1, b.G[i]) == 0, Extract(2, 2, b.G[i]) == 0, Extract(3, 3, b.G[i]) == 0, Extract(4, 4, b.G[i]) == 0, Extract(5, 5, b.G[i]) == 0, Extract(6, 6, b.G[i]) == 0, Extract(7, 7, b.G[i]) == 1, Extract(8, 8, b.G[i]) == 0, Extract(9, 9, b.G[i]) == 0, Extract(10, 10, b.G[i]) == 0, Extract(11, 11, b.G[i]) == 0),
+            And(Extract(0, 0, b.G[i]) == 0, Extract(1, 1, b.G[i]) == 0, Extract(2, 2, b.G[i]) == 0, Extract(3, 3, b.G[i]) == 0, Extract(4, 4, b.G[i]) == 0, Extract(5, 5, b.G[i]) == 0, Extract(6, 6, b.G[i]) == 0, Extract(7, 7, b.G[i]) == 0, Extract(8, 8, b.G[i]) == 1, Extract(9, 9, b.G[i]) == 0, Extract(10, 10, b.G[i]) == 0, Extract(11, 11, b.G[i]) == 0),
+            And(Extract(0, 0, b.G[i]) == 0, Extract(1, 1, b.G[i]) == 0, Extract(2, 2, b.G[i]) == 0, Extract(3, 3, b.G[i]) == 0, Extract(4, 4, b.G[i]) == 0, Extract(5, 5, b.G[i]) == 0, Extract(6, 6, b.G[i]) == 0, Extract(7, 7, b.G[i]) == 0, Extract(8, 8, b.G[i]) == 0, Extract(9, 9, b.G[i]) == 1, Extract(10, 10, b.G[i]) == 0, Extract(11, 11, b.G[i]) == 0),
+            And(Extract(0, 0, b.G[i]) == 0, Extract(1, 1, b.G[i]) == 0, Extract(2, 2, b.G[i]) == 0, Extract(3, 3, b.G[i]) == 0, Extract(4, 4, b.G[i]) == 0, Extract(5, 5, b.G[i]) == 0, Extract(6, 6, b.G[i]) == 0, Extract(7, 7, b.G[i]) == 0, Extract(8, 8, b.G[i]) == 0, Extract(9, 9, b.G[i]) == 0, Extract(10, 10, b.G[i]) == 1, Extract(11, 11, b.G[i]) == 0),
+            And(Extract(0, 0, b.G[i]) == 0, Extract(1, 1, b.G[i]) == 0, Extract(2, 2, b.G[i]) == 0, Extract(3, 3, b.G[i]) == 0, Extract(4, 4, b.G[i]) == 0, Extract(5, 5, b.G[i]) == 0, Extract(6, 6, b.G[i]) == 0, Extract(7, 7, b.G[i]) == 0, Extract(8, 8, b.G[i]) == 0, Extract(9, 9, b.G[i]) == 0, Extract(10, 10, b.G[i]) == 0, Extract(11, 11, b.G[i]) == 1)))
+
     #Force all alphabet characters to use at most two buttons.
     # There are 66 two button combos and 12 one button options.
-    for i in range(n.alphabet_size):
+    for i in range(p.force_one_button_for_n_most_freq_chars + 1, n.alphabet_size):
         s.add(Or(
             And(Extract(0, 0, b.G[i]) == 1, Extract(1, 1, b.G[i]) == 0, Extract(2, 2, b.G[i]) == 0, Extract(3, 3, b.G[i]) == 0, Extract(4, 4, b.G[i]) == 0, Extract(5, 5, b.G[i]) == 0, Extract(6, 6, b.G[i]) == 0, Extract(7, 7, b.G[i]) == 0, Extract(8, 8, b.G[i]) == 0, Extract(9, 9, b.G[i]) == 0, Extract(10, 10, b.G[i]) == 0, Extract(11, 11, b.G[i]) == 0),
 	        And(Extract(0, 0, b.G[i]) == 0, Extract(1, 1, b.G[i]) == 1, Extract(2, 2, b.G[i]) == 0, Extract(3, 3, b.G[i]) == 0, Extract(4, 4, b.G[i]) == 0, Extract(5, 5, b.G[i]) == 0, Extract(6, 6, b.G[i]) == 0, Extract(7, 7, b.G[i]) == 0, Extract(8, 8, b.G[i]) == 0, Extract(9, 9, b.G[i]) == 0, Extract(10, 10, b.G[i]) == 0, Extract(11, 11, b.G[i]) == 0),
