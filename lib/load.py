@@ -67,11 +67,10 @@ def prune_excess_counts(p, n_grams, count, alphabet_size):
     assert(total_count == total_count_assertion_check)
     assert len(count) == len(n_grams)
 
-# Not used in stride version
-    # for i in range(len(n_grams)):
-    #     if count[i] <= 0:
-    #         print("freq_prune is set too high!")
-    #         sys.exit()
+    for i in range(len(n_grams)):
+        if count[i] <= 0:
+            print("freq_prune is set too high!")
+            sys.exit()
     print(f"Removed {total_removal * 100 / total_count:.2f}% of frequency count as excess.")
 
     return index

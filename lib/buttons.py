@@ -75,18 +75,16 @@ def problem_def(s, n):
 
     cost = [ Real('rc%s' % i) for i in range(len(n.grams)) ]
 
-#************ Cumulative Cost not used in stride version****************
-    # # cumulative_cost is cost times frequency.
-    # cumulative_cost = [ Real('cc%s' % i) for i in range(len(n.grams)) ]
-    # print(f"cum_cost_len: {len(cumulative_cost)} n_gram_len: {len(n.grams)}")
-    # # This is a round about way of summing up the total cost of the
-    # #   whole problem. Keep in mind that we are limited to 1st-order logic
-    # s.add(cumulative_cost[0] == cost[0] * n.count[0])
-    # s.add( [ cumulative_cost[i] == cumulative_cost[i-1] + cost[i] * n.count[i] \
-    #             for i in range(1, len(n.grams)) ] )
-
-    return Buttons(G=G, F=F, cost=cost)
-    # return Buttons(G=G, F=F, cost=cost, cumulative_cost=cumulative_cost)
+    # cumulative_cost is cost times frequency.
+    cumulative_cost = [ Real('cc%s' % i) for i in range(len(n.grams)) ]
+    print(f"cum_cost_len: {len(cumulative_cost)} n_gram_len: {len(n.grams)}")
+    # This is a round about way of summing up the total cost of the
+    #   whole problem. Keep in mind that we are limited to 1st-order logic
+    s.add(cumulative_cost[0] == cost[0] * n.count[0])
+    s.add( [ cumulative_cost[i] == cumulative_cost[i-1] + cost[i] * n.count[i] \
+                for i in range(1, len(n.grams)) ] )
+# 
+    return Buttons(G=G, F=F, cost=cost, cumulative_cost=cumulative_cost)
 
 def cost_scc(p, s, n, b):
 
