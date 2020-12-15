@@ -54,8 +54,10 @@ s.add(Extract(11, 11, b.F[n.index['D']]) == 0) #Ends 9.98% of words
 # s.add(Extract(11, 11, b.F[n.index['A']]) == 0) #Ends 2.82% of words
 # s.add(Extract(11, 11, b.F[n.index['H']]) == 0) #Ends 2.71% of words
 
-# If E cannot use *M** can it achieve 2.6846? If not fix E here.
-# s.add(Extract(7, 7, b.G[n.index['E']]) == 0)
+# Force letters
+# E cannot use index finger, because it frequently ends words.
+# E is the most common so we force it to use the best non index key.
+s.add(And(Extract(0, 0, b.G[n.index['E']]) == 0, Extract(1, 1, b.G[n.index['E']]) == 0, Extract(2, 2, b.G[n.index['E']]) == 0, Extract(3, 3, b.G[n.index['E']]) == 0, Extract(4, 4, b.G[n.index['E']]) == 1, Extract(5, 5, b.G[n.index['E']]) == 0, Extract(6, 6, b.G[n.index['E']]) == 0, Extract(7, 7, b.G[n.index['E']]) == 0, Extract(8, 8, b.G[n.index['E']]) == 0, Extract(9, 9, b.G[n.index['E']]) == 0, Extract(10, 10, b.G[n.index['E']]) == 0, Extract(11, 11, b.G[n.index['E']]) == 0))
 
 
 # If cost of chords is given in seconds then cumulative_cost[len(n.grams)-1] is
