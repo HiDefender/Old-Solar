@@ -64,7 +64,7 @@ s.add(Extract(11, 11, b.F[n.index['D']]) == 0) #Ends 9.98% of words
 s.add(And(Extract(0, 0, b.G[n.index['E']]) == 0, Extract(1, 1, b.G[n.index['E']]) == 0, Extract(2, 2, b.G[n.index['E']]) == 0, Extract(3, 3, b.G[n.index['E']]) == 0, Extract(4, 4, b.G[n.index['E']]) == 1, Extract(5, 5, b.G[n.index['E']]) == 0, Extract(6, 6, b.G[n.index['E']]) == 0, Extract(7, 7, b.G[n.index['E']]) == 0, Extract(8, 8, b.G[n.index['E']]) == 0, Extract(9, 9, b.G[n.index['E']]) == 0, Extract(10, 10, b.G[n.index['E']]) == 0, Extract(11, 11, b.G[n.index['E']]) == 0))
 # Force T to use the best button of whatever finger it uses.
 #   If it uses the index finger then it will use the 2nd best button, because E uses the best.
-s.Add(Or(
+s.add(Or(
     # Middle Middle
     And(Extract(0, 0, b.G[n.index['T']]) == 0, Extract(1, 1, b.G[n.index['T']]) == 0, Extract(2, 2, b.G[n.index['T']]) == 0, Extract(3, 3, b.G[n.index['T']]) == 0, Extract(4, 4, b.G[n.index['T']]) == 0, Extract(5, 5, b.G[n.index['T']]) == 0, Extract(6, 6, b.G[n.index['T']]) == 0, Extract(7, 7, b.G[n.index['T']]) == 1, Extract(8, 8, b.G[n.index['T']]) == 0, Extract(9, 9, b.G[n.index['T']]) == 0, Extract(10, 10, b.G[n.index['T']]) == 0, Extract(11, 11, b.G[n.index['T']]) == 0),
     # Pinky Middle
