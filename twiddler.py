@@ -60,7 +60,7 @@ s.add(Extract(11, 11, b.F[n.index['D']]) == 0) #Ends 9.98% of words
 
 # E cannot use index finger, because it frequently ends words.
 # E is the most common so we force it to use the best non index key.
-# Middle Ring
+# Ring Middle
 s.add(And(Extract(0, 0, b.G[n.index['E']]) == 0, Extract(1, 1, b.G[n.index['E']]) == 0, Extract(2, 2, b.G[n.index['E']]) == 0, Extract(3, 3, b.G[n.index['E']]) == 0, Extract(4, 4, b.G[n.index['E']]) == 1, Extract(5, 5, b.G[n.index['E']]) == 0, Extract(6, 6, b.G[n.index['E']]) == 0, Extract(7, 7, b.G[n.index['E']]) == 0, Extract(8, 8, b.G[n.index['E']]) == 0, Extract(9, 9, b.G[n.index['E']]) == 0, Extract(10, 10, b.G[n.index['E']]) == 0, Extract(11, 11, b.G[n.index['E']]) == 0))
 # Force T to use the best button of whatever finger it uses.
 #   If it uses the index finger then it will use the 2nd best button, because E uses the best.
@@ -84,10 +84,12 @@ s.add(And(Extract(0, 0, b.G[n.index['A']]) == 0, Extract(1, 1, b.G[n.index['A']]
 #   these pairs should be on the same side if applicable:
 #   "IN", "IT", "IS", "OR", "OF"
 
+print(f"I index: {n.index['I']}, A index: {n.index['A']}")
+
 # Index Left
-And(Extract(0, 0, b.G[n.index['O']]) == 0, Extract(1, 1, b.G[n.index['O']]) == 0, Extract(2, 2, b.G[n.index['O']]) == 0, Extract(3, 3, b.G[n.index['O']]) == 0, Extract(4, 4, b.G[n.index['O']]) == 0, Extract(5, 5, b.G[n.index['O']]) == 0, Extract(6, 6, b.G[n.index['O']]) == 0, Extract(7, 7, b.G[n.index['O']]) == 0, Extract(8, 8, b.G[n.index['O']]) == 0, Extract(9, 9, b.G[n.index['O']]) == 0, Extract(10, 10, b.G[n.index['O']]) == 0, Extract(11, 11, b.G[n.index['O']]) == 1)
+s.add(And(Extract(0, 0, b.G[n.index['O']]) == 0, Extract(1, 1, b.G[n.index['O']]) == 0, Extract(2, 2, b.G[n.index['O']]) == 0, Extract(3, 3, b.G[n.index['O']]) == 0, Extract(4, 4, b.G[n.index['O']]) == 0, Extract(5, 5, b.G[n.index['O']]) == 0, Extract(6, 6, b.G[n.index['O']]) == 0, Extract(7, 7, b.G[n.index['O']]) == 0, Extract(8, 8, b.G[n.index['O']]) == 0, Extract(9, 9, b.G[n.index['O']]) == 0, Extract(10, 10, b.G[n.index['O']]) == 0, Extract(11, 11, b.G[n.index['O']]) == 1))
 # Index Right
-And(Extract(0, 0, b.G[n.index['I']]) == 0, Extract(1, 1, b.G[n.index['I']]) == 0, Extract(2, 2, b.G[n.index['I']]) == 0, Extract(3, 3, b.G[n.index['I']]) == 0, Extract(4, 4, b.G[n.index['I']]) == 0, Extract(5, 5, b.G[n.index['I']]) == 0, Extract(6, 6, b.G[n.index['I']]) == 0, Extract(7, 7, b.G[n.index['I']]) == 0, Extract(8, 8, b.G[n.index['I']]) == 0, Extract(9, 9, b.G[n.index['I']]) == 0, Extract(10, 10, b.G[n.index['I']]) == 1, Extract(11, 11, b.G[n.index['I']]) == 0)
+s.add(And(Extract(0, 0, b.G[n.index['I']]) == 0, Extract(1, 1, b.G[n.index['I']]) == 0, Extract(2, 2, b.G[n.index['I']]) == 0, Extract(3, 3, b.G[n.index['I']]) == 0, Extract(4, 4, b.G[n.index['I']]) == 0, Extract(5, 5, b.G[n.index['I']]) == 0, Extract(6, 6, b.G[n.index['I']]) == 0, Extract(7, 7, b.G[n.index['I']]) == 0, Extract(8, 8, b.G[n.index['I']]) == 0, Extract(9, 9, b.G[n.index['I']]) == 1, Extract(10, 10, b.G[n.index['I']]) == 0, Extract(11, 11, b.G[n.index['I']]) == 0))
 
 # If cost of chords is given in seconds then cumulative_cost[len(n.grams)-1] is
 #   the seconds to enter all n-grams k times per n-gram where k is the frequency
