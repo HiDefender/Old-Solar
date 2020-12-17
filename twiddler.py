@@ -84,8 +84,6 @@ s.add(And(Extract(0, 0, b.G[n.index['A']]) == 0, Extract(1, 1, b.G[n.index['A']]
 #   these pairs should be on the same side if applicable:
 #   "IN", "IT", "IS", "OR", "OF"
 
-print(f"I index: {n.index['I']}, A index: {n.index['A']}")
-
 # Index Left
 s.add(And(Extract(0, 0, b.G[n.index['O']]) == 0, Extract(1, 1, b.G[n.index['O']]) == 0, Extract(2, 2, b.G[n.index['O']]) == 0, Extract(3, 3, b.G[n.index['O']]) == 0, Extract(4, 4, b.G[n.index['O']]) == 0, Extract(5, 5, b.G[n.index['O']]) == 0, Extract(6, 6, b.G[n.index['O']]) == 0, Extract(7, 7, b.G[n.index['O']]) == 0, Extract(8, 8, b.G[n.index['O']]) == 0, Extract(9, 9, b.G[n.index['O']]) == 0, Extract(10, 10, b.G[n.index['O']]) == 0, Extract(11, 11, b.G[n.index['O']]) == 1))
 # Index Right
