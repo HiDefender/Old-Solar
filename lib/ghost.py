@@ -11,7 +11,8 @@ import lib
 # These combos ghost on Twiddler 3, because the hardware wasn't designed to
 #   use mupltiple buttons per row.
 def ghost_combos(s, n, b):
-    s.add([ Not(And(Extract(10, 10, b.G[i]) == 1, Extract(6, 6, b.G[i]) == 1, Extract(1, 1, b.G[i]) == 1), Extract(0, 0, b.G[i]) == 1)  for i in range(len(n.grams)) ]) # MR0(RM)
+    # Probably unnecessary constraint.
+    # s.add([ Not(And(Extract(10, 10, b.G[i]) == 1, Extract(6, 6, b.G[i]) == 1, Extract(1, 1, b.G[i]) == 1), Extract(0, 0, b.G[i]) == 1)  for i in range(len(n.grams)) ]) # MR0(RM)
 
     for i in range(len(n.grams)):
         s.add(Or(Or(Extract(11, 11, b.G[i]) == 0, Extract(10, 10, b.G[i]) == 0), And(Extract(11, 11, b.G[i]) == 1, Extract(10, 10, b.G[i]) == 1, Extract( 8,  8, b.G[i]) == 0, Extract( 7,  7, b.G[i]) == 0,    Extract(5, 5, b.G[i]) == 0, Extract(4, 4, b.G[i]) == 0,    Extract(2, 2, b.G[i]) == 0, Extract(1, 1, b.G[i]) == 0)))
