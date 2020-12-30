@@ -65,12 +65,16 @@ s.add(And(Extract(0, 0, b.G[n.index['E']]) == 0, Extract(1, 1, b.G[n.index['E']]
 # Force T to use the best button of whatever finger it uses after E.
 #   If it uses the index finger then it will use the 2nd best button, because E uses the best.
 s.add(Or(
+    # *No strong reason  for choosing "Middle Middle" it performed slightly better than alternatives before timeout:
+    # *Middle Middle: 2.9078
+    # *Ring Right:    2.9008 *Preferred to not have E on the same row as T, because of multi-button per row issues.
+    # *Pinky Middle:  2.8826
     # Middle Middle
     And(Extract(0, 0, b.G[n.index['T']]) == 0, Extract(1, 1, b.G[n.index['T']]) == 0, Extract(2, 2, b.G[n.index['T']]) == 0, Extract(3, 3, b.G[n.index['T']]) == 0, Extract(4, 4, b.G[n.index['T']]) == 0, Extract(5, 5, b.G[n.index['T']]) == 0, Extract(6, 6, b.G[n.index['T']]) == 0, Extract(7, 7, b.G[n.index['T']]) == 1, Extract(8, 8, b.G[n.index['T']]) == 0, Extract(9, 9, b.G[n.index['T']]) == 0, Extract(10, 10, b.G[n.index['T']]) == 0, Extract(11, 11, b.G[n.index['T']]) == 0),
     # Pinky Middle
-    And(Extract(0, 0, b.G[n.index['T']]) == 0, Extract(1, 1, b.G[n.index['T']]) == 1, Extract(2, 2, b.G[n.index['T']]) == 0, Extract(3, 3, b.G[n.index['T']]) == 0, Extract(4, 4, b.G[n.index['T']]) == 0, Extract(5, 5, b.G[n.index['T']]) == 0, Extract(6, 6, b.G[n.index['T']]) == 0, Extract(7, 7, b.G[n.index['T']]) == 0, Extract(8, 8, b.G[n.index['T']]) == 0, Extract(9, 9, b.G[n.index['T']]) == 0, Extract(10, 10, b.G[n.index['T']]) == 0, Extract(11, 11, b.G[n.index['T']]) == 0),
+    # And(Extract(0, 0, b.G[n.index['T']]) == 0, Extract(1, 1, b.G[n.index['T']]) == 1, Extract(2, 2, b.G[n.index['T']]) == 0, Extract(3, 3, b.G[n.index['T']]) == 0, Extract(4, 4, b.G[n.index['T']]) == 0, Extract(5, 5, b.G[n.index['T']]) == 0, Extract(6, 6, b.G[n.index['T']]) == 0, Extract(7, 7, b.G[n.index['T']]) == 0, Extract(8, 8, b.G[n.index['T']]) == 0, Extract(9, 9, b.G[n.index['T']]) == 0, Extract(10, 10, b.G[n.index['T']]) == 0, Extract(11, 11, b.G[n.index['T']]) == 0),
     # Ring Right
-    And(Extract(0, 0, b.G[n.index['T']]) == 0, Extract(1, 1, b.G[n.index['T']]) == 0, Extract(2, 2, b.G[n.index['T']]) == 0, Extract(3, 3, b.G[n.index['T']]) == 1, Extract(4, 4, b.G[n.index['T']]) == 0, Extract(5, 5, b.G[n.index['T']]) == 0, Extract(6, 6, b.G[n.index['T']]) == 0, Extract(7, 7, b.G[n.index['T']]) == 0, Extract(8, 8, b.G[n.index['T']]) == 0, Extract(9, 9, b.G[n.index['T']]) == 0, Extract(10, 10, b.G[n.index['T']]) == 0, Extract(11, 11, b.G[n.index['T']]) == 0)
+    # And(Extract(0, 0, b.G[n.index['T']]) == 0, Extract(1, 1, b.G[n.index['T']]) == 0, Extract(2, 2, b.G[n.index['T']]) == 0, Extract(3, 3, b.G[n.index['T']]) == 1, Extract(4, 4, b.G[n.index['T']]) == 0, Extract(5, 5, b.G[n.index['T']]) == 0, Extract(6, 6, b.G[n.index['T']]) == 0, Extract(7, 7, b.G[n.index['T']]) == 0, Extract(8, 8, b.G[n.index['T']]) == 0, Extract(9, 9, b.G[n.index['T']]) == 0, Extract(10, 10, b.G[n.index['T']]) == 0, Extract(11, 11, b.G[n.index['T']]) == 0)
 ))
 # Force A to use the best index button.
 # A gets the best button overall index middle, because A is the third most frequent char AND
@@ -91,12 +95,19 @@ s.add(And(Extract(0, 0, b.G[n.index['I']]) == 0, Extract(1, 1, b.G[n.index['I']]
 
 # Force N to use the best button of whatever finger it uses after E, T.
 # This can be done by giving two buttons it cannot be.
-s.add(And(
-    # Pinky Left
-    Not(And(Extract(0, 0, b.G[n.index['N']]) == 0, Extract(1, 1, b.G[n.index['N']]) == 0, Extract(2, 2, b.G[n.index['N']]) == 1, Extract(3, 3, b.G[n.index['N']]) == 0, Extract(4, 4, b.G[n.index['N']]) == 0, Extract(5, 5, b.G[n.index['N']]) == 0, Extract(6, 6, b.G[n.index['N']]) == 0, Extract(7, 7, b.G[n.index['N']]) == 0, Extract(8, 8, b.G[n.index['N']]) == 0, Extract(9, 9, b.G[n.index['N']]) == 0, Extract(10, 10, b.G[n.index['N']]) == 0, Extract(11, 11, b.G[n.index['N']]) == 0)),
-    # Middle Left
-    Not(And(Extract(0, 0, b.G[n.index['N']]) == 0, Extract(1, 1, b.G[n.index['N']]) == 0, Extract(2, 2, b.G[n.index['N']]) == 0, Extract(3, 3, b.G[n.index['N']]) == 0, Extract(4, 4, b.G[n.index['N']]) == 0, Extract(5, 5, b.G[n.index['N']]) == 0, Extract(6, 6, b.G[n.index['N']]) == 0, Extract(7, 7, b.G[n.index['N']]) == 0, Extract(8, 8, b.G[n.index['N']]) == 1, Extract(9, 9, b.G[n.index['N']]) == 0, Extract(10, 10, b.G[n.index['N']]) == 0, Extract(11, 11, b.G[n.index['N']]) == 0))
+s.add(Or(
+    # Middle Right
+    And(Extract(0, 0, b.G[n.index['N']]) == 0, Extract(1, 1, b.G[n.index['N']]) == 0, Extract(2, 2, b.G[n.index['N']]) == 0, Extract(3, 3, b.G[n.index['N']]) == 0, Extract(4, 4, b.G[n.index['N']]) == 0, Extract(5, 5, b.G[n.index['N']]) == 0, Extract(6, 6, b.G[n.index['N']]) == 1, Extract(7, 7, b.G[n.index['N']]) == 0, Extract(8, 8, b.G[n.index['N']]) == 0, Extract(9, 9, b.G[n.index['N']]) == 0, Extract(10, 10, b.G[n.index['N']]) == 0, Extract(11, 11, b.G[n.index['N']]) == 0),
+    # Ring Right
+    And(Extract(0, 0, b.G[n.index['N']]) == 0, Extract(1, 1, b.G[n.index['N']]) == 0, Extract(2, 2, b.G[n.index['N']]) == 0, Extract(3, 3, b.G[n.index['N']]) == 1, Extract(4, 4, b.G[n.index['N']]) == 0, Extract(5, 5, b.G[n.index['N']]) == 0, Extract(6, 6, b.G[n.index['N']]) == 0, Extract(7, 7, b.G[n.index['N']]) == 0, Extract(8, 8, b.G[n.index['N']]) == 0, Extract(9, 9, b.G[n.index['N']]) == 0, Extract(10, 10, b.G[n.index['N']]) == 0, Extract(11, 11, b.G[n.index['N']]) == 0),
+    # Pinky Right
+    And(Extract(0, 0, b.G[n.index['N']]) == 1, Extract(1, 1, b.G[n.index['N']]) == 0, Extract(2, 2, b.G[n.index['N']]) == 0, Extract(3, 3, b.G[n.index['N']]) == 0, Extract(4, 4, b.G[n.index['N']]) == 0, Extract(5, 5, b.G[n.index['N']]) == 0, Extract(6, 6, b.G[n.index['N']]) == 0, Extract(7, 7, b.G[n.index['N']]) == 0, Extract(8, 8, b.G[n.index['N']]) == 0, Extract(9, 9, b.G[n.index['N']]) == 0, Extract(10, 10, b.G[n.index['N']]) == 0, Extract(11, 11, b.G[n.index['N']]) == 0)
 ))
+
+# Force H to use pinky so that "THE" doesn't involve MBR (multiple buttons per row).
+# Force H to use middle pinky so that "THE" is on the middle row.
+# Pinky Middle
+s.add(And(Extract(0, 0, b.G[n.index['H']]) == 0, Extract(1, 1, b.G[n.index['H']]) == 1, Extract(2, 2, b.G[n.index['H']]) == 0, Extract(3, 3, b.G[n.index['H']]) == 0, Extract(4, 4, b.G[n.index['H']]) == 0, Extract(5, 5, b.G[n.index['H']]) == 0, Extract(6, 6, b.G[n.index['H']]) == 0, Extract(7, 7, b.G[n.index['H']]) == 0, Extract(8, 8, b.G[n.index['H']]) == 0, Extract(9, 9, b.G[n.index['H']]) == 0, Extract(10, 10, b.G[n.index['H']]) == 0, Extract(11, 11, b.G[n.index['H']]) == 0))
 
 # If cost of chords is given in seconds then cumulative_cost[len(n.grams)-1] is
 #   the seconds to enter all n-grams k times per n-gram where k is the frequency
